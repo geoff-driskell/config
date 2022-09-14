@@ -1,0 +1,82 @@
+- platform: time_date
+  display_options:
+    - "time"
+
+- platform: template
+  sensors:
+    tesla_est_battery_range_mi:
+      unique_id: b780dea7-261f-4565-b676-c2eb6dbbaed5
+      friendly_name: Estimated Range (mi)
+      unit_of_measurement: mi
+      icon_template: mdi:gauge
+      value_template: >
+        {{ (states('sensor.tesla_est_battery_range_km') | float / 1.609344) | round(2) }}
+
+    tesla_rated_battery_range_mi:
+      unique_id: e18bb94c-0ead-44f8-8c87-c6444329de64
+      friendly_name: Rated Range (mi)
+      unit_of_measurement: mi
+      icon_template: mdi:gauge
+      value_template: >
+        {{ (states('sensor.tesla_rated_battery_range_km') | float / 1.609344) | round(2) }}
+
+    tesla_ideal_battery_range_mi:
+      unique_id: 691847f8-b25a-4fcf-ba27-049b161d2b87
+      friendly_name: Ideal Range (mi)
+      unit_of_measurement: mi
+      icon_template: mdi:gauge
+      value_template: >
+        {{ (states('sensor.tesla_ideal_battery_range_km') | float / 1.609344) | round(2) }}
+
+    tesla_odometer_mi:
+      unique_id: fdf29b20-5dc1-4de1-aa6f-69070dd2fdbb
+      friendly_name: Odometer (mi)
+      unit_of_measurement: mi
+      icon_template: mdi:counter
+      value_template: >
+        {{ (states('sensor.tesla_odometer') | float / 1.609344) | round(2) }}
+
+    tesla_speed_mph:
+      unique_id: f2ad76c7-bbd9-46ee-af95-cb9fd90b791a
+      friendly_name: Speed (MPH)
+      unit_of_measurement: mph
+      icon_template: mdi:speedometer
+      value_template: >
+        {{ (states('sensor.tesla_speed') | float / 1.609344) | round(2) }}
+
+    tesla_elevation_ft:
+      unique_id: 6440c399-2bc7-4485-b507-5150cafec9b1
+      friendly_name: Elevation (ft)
+      unit_of_measurement: ft
+      icon_template: mdi:image-filter-hdr
+      value_template: >
+        {{ (states('sensor.tesla_elevation') | float * 3.2808 ) | round(2) }}
+
+- platform: history_stats
+  name: Avery Total Naptime Today
+  entity_id: input_boolean.avery_naptime
+  state: "on"
+  type: time
+  start: "{{ now().replace(hour=9, minute=0, second=0) }}"
+  end: "{{ now().replace(hour=17, minute=0, second=0) }}"
+- platform: history_stats
+  name: Benjamin Total Naptime Today
+  entity_id: input_boolean.benjamin_naptime
+  state: "on"
+  type: time
+  start: "{{ now().replace(hour=9, minute=0, second=0) }}"
+  end: "{{ now().replace(hour=17, minute=0, second=0) }}"
+
+- platform: mqtt_room
+  device_id: "Geoff-iPhone"
+  name: "Geoff's iPhone"
+  state_topic: 'espresense/rooms'
+  timeout: 10
+  away_timeout: 10
+
+- platform: mqtt_room
+  device_id: "roomAssistant:a7bfcc9a-9afc-4602-af98-41ed2bcb9150"
+  name: "Victoria BLE"
+  state_topic: 'espresense/rooms'
+  timeout: 10
+  away_timeout: 10

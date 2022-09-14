@@ -1,0 +1,56 @@
+- id: '1643220286076'
+  name: Kitchen Dim
+  entities:
+    switch.kitchen_island_lights:
+      device_id: '4'
+      zone_id: '3'
+      friendly_name: Kitchen Island Lights
+      state: 'on'
+    switch.kitchen_lights:
+      device_id: '5'
+      zone_id: '4'
+      friendly_name: Kitchen Lights
+      state: 'off'
+  icon: mdi:lightbulb-on-outline
+- id: '1643220404717'
+  name: Kitchen Bright
+  entities:
+    switch.kitchen_island_lights:
+      device_id: '4'
+      zone_id: '3'
+      friendly_name: Kitchen Island Lights
+      state: 'off'
+    switch.kitchen_lights:
+      device_id: '5'
+      zone_id: '4'
+      friendly_name: Kitchen Lights
+      state: 'on'
+  icon: mdi:lightbulb-on
+- id: '1643220457861'
+  name: Kitchen Brightest
+  entities:
+    switch.kitchen_island_lights:
+      device_id: '4'
+      zone_id: '3'
+      friendly_name: Kitchen Island Lights
+      state: 'on'
+    switch.kitchen_lights:
+      device_id: '5'
+      zone_id: '4'
+      friendly_name: Kitchen Lights
+      state: 'on'
+  icon: mdi:lightbulb-group
+- id: '1643221590601'
+  name: Kitchen Off
+  entities:
+    switch.kitchen_island_lights:
+      device_id: '4'
+      zone_id: '3'
+      friendly_name: Kitchen Island Lights
+      state: 'off'
+    switch.kitchen_lights:
+      device_id: '5'
+      zone_id: '4'
+      friendly_name: Kitchen Lights
+      state: 'off'
+  icon: mdi:lightbulb-group-off

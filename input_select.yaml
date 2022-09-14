@@ -1,0 +1,10 @@
+trash_pickup:
+  name: Trash Pickup
+  options:
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+  initial: Friday
+  icon: mdi:delete-variant

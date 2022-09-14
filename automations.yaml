@@ -1,0 +1,424 @@
+- id: 57f4db02-d67d-4512-8877-ac22fdc0b3c1
+  alias: Kitchen Scenes Based on Motion and Time of Day
+  description: Changes the scene that is activated by motion based on the time of
+    day.
+  use_blueprint:
+    path: geoff-driskell/occupancy_activated_time_dependent_scene.yaml
+    input:
+      motion_sensor: binary_sensor.kitchen_occupancy
+      morning_start: 05:00:00
+      morning_scene: scene.dim_kitchen
+      day_start: 07:00:00
+      day_scene: scene.brightest_kitchen
+      evening_start: '17:00:00'
+      evening_scene: scene.bright_kitchen
+      night_start: '19:00:00'
+      off_scene: scene.kitchen_off
+- id: '1643399744245'
+  alias: Server Room Light
+  description: ''
+  use_blueprint:
+    path: geoff-driskell/door_activated_switch.yaml
+    input:
+      switch_target: switch.server_room_main_lights
+      door_entity: binary_sensor.server_room_door
+- id: '1643399794312'
+  alias: Pantry Door Light
+  description: ''
+  use_blueprint:
+    path: geoff-driskell/door_activated_switch.yaml
+    input:
+      switch_target: switch.pantry_main_lights
+      door_entity: binary_sensor.pantry_door
+- id: '1643859024941'
+  alias: Mudroom Motion Lights
+  description: ''
+  use_blueprint:
+    path: Zkaning/turn-on-a-switch-when-motion-is-detected.yaml
+    input:
+      lightsensor_entity: sensor.mudroom_illuminance
+      switch_target:
+        device_id: e0eaaf7174882bd5b777a5cd4bed0433
+      time_from: 00:00:00
+      time_to: 00:00:00
+      motion_entity: binary_sensor.mudroom_motion
+- id: '1643859120917'
+  alias: Victoria’s Closet Motion Lights
+  description: ''
+  use_blueprint:
+    path: Zkaning/turn-on-a-switch-when-motion-is-detected.yaml
+    input:
+      lightsensor_entity: sensor.victoria_closet_illuminance
+      switch_target:
+        device_id: 03d1558ae3c8539decf1bb7c2cf6aaf1
+      time_from: 05:00:00
+      time_to: '22:00:00'
+      motion_entity: binary_sensor.victoria_closet_motion
+- id: '1643859242248'
+  alias: Downstairs Bathroom Motion Lights
+  description: ''
+  use_blueprint:
+    path: Zkaning/turn-on-a-switch-when-motion-is-detected.yaml
+    input:
+      lightsensor_entity: sensor.downstairs_bathroom_illuminance
+      switch_target:
+        device_id:
+        - f584cef978636f4a037a7aa5b4f242d1
+      time_from: 05:00:00
+      time_to: '23:00:00'
+      motion_entity: binary_sensor.downstairs_bathroom_motion
+      no_motion_wait: 515
+- id: '1643929782566'
+  alias: Kids Bathroom Lights
+  description: ''
+  use_blueprint:
+    path: geoff-driskell/occupancy_activated_time_dependent_brightness.yaml
+    input:
+      motion_sensor: binary_sensor.kid_bathroom_occupancy
+      target_light: light.kids_bathroom_vanity_lights
+      morning_start: 05:00:00
+      day_start: 07:00:00
+      evening_start: '19:00:00'
+      night_start: '22:00:00'
+      night_brightness: 7
+- alias: Update Tesla location as MQTT location updates
+  initial_state: true
+  trigger:
+  - platform: mqtt
+    topic: teslamate/cars/1/latitude
+  - platform: mqtt
+    topic: teslamate/cars/1/longitude
+  action:
+  - service: device_tracker.see
+    data_template:
+      dev_id: tesla_location
+      gps:
+      - '{{ states.sensor.tesla_latitude.state }}'
+      - '{{ states.sensor.tesla_longitude.state }}'
+  id: 60bbbc7b8b5d4b4fb6e0bf039768570a
+- id: 30c266f9-b727-4cef-9597-07300fe2da0b
+  alias: CAC Reminder Garage Door
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.mudroom_door
+    from: 'off'
+    to: 'on'
+  condition:
+  - alias: Workday
+    condition: time
+    before: 08:00:00
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  - alias: Tesla Home
+    condition: state
+    entity_id: device_tracker.tesla_location
+    state: home
+  action:
+  - service: script.sonos_say
+    data_template:
+      sonos_entity: media_player.office
+      volume: 0.7
+      message: Good morning, Geoffrey. It looks like you are headed to work. Please
+        make sure you did not forget your cack!
+- id: 1a8552dc-353f-473c-9677-23f9d6a09abc
+  alias: Master Bathroom Fan Timer
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.master_bathroom_toilet_fan
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+  action:
+  - type: turn_off
+    device_id: df4c3ed540dc448f34cfa6264b428d2e
+    entity_id: switch.master_bathroom_toilet_fan
+    domain: switch
+- id: 883bdcce-e249-48ea-a78b-a70be370e454
+  alias: Shower Light On
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.master_bathroom_shower_door
+    from: 'off'
+    to: 'on'
+  action:
+  - service: switch.turn_on
+    entity_id: switch.master_bathroom_shower_lights
+- id: b58614c7-8bba-4229-8f81-b9ea30329f62
+  alias: Master Toilet Light
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.master_bathroom_toilet_motion
+    id: 'on'
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.master_bathroom_toilet_motion
+    id: 'off'
+    to: 'off'
+    for: 00:05:00
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: 'on'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: time
+            after: input_datetime.master_bath_morning_start
+            before: input_datetime.master_bath_day_start
+          sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: '{{ states("input_number.master_bathroom_wakeup") |
+                int }}
+
+                '
+            target:
+              entity_id: light.master_bathroom_toilet_light
+        - conditions:
+          - condition: time
+            after: input_datetime.master_bath_day_start
+            before: input_datetime.master_bath_evening_start
+          sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: '{{ states("input_number.master_bathroom_day_brightness")
+                | int }}
+
+                '
+            target:
+              entity_id: light.master_bathroom_toilet_light
+        - conditions:
+          - condition: time
+            after: input_datetime.master_bath_evening_start
+            before: input_datetime.master_bath_night_start
+          sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: '{{ states("input_number.master_bathroom_evening_brightness")
+                | int }}
+
+                '
+            target:
+              entity_id: light.master_bathroom_toilet_light
+        - conditions:
+          - condition: time
+            after: input_datetime.master_bath_night_start
+            before: input_datetime.master_bath_morning_start
+          sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: '{{ states("input_number.master_bathroom_night_brightness")
+                | int }}
+
+                '
+            target:
+              entity_id: light.master_bathroom_toilet_light
+    - conditions:
+      - condition: trigger
+        id: 'off'
+      sequence:
+      - service: light.turn_off
+        target:
+          entity_id: light.master_bathroom_toilet_light
+- id: 9eb273f9-a634-4684-b0ad-59c48e726d98
+  alias: Master Bathroom Wakeup Lights
+  trigger:
+  - platform: state
+    entity_id: group.master_bath_occupancy
+    id: 'on'
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: group.master_bath_occupancy
+    id: 'off'
+    from: 'on'
+    to: 'off'
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: 'on'
+      - condition: state
+        entity_id: light.master_bathroom_vanity_lights
+        state: 'off'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: time
+            after: input_datetime.master_bath_morning_start
+            before: input_datetime.master_bath_day_start
+          sequence:
+          - service: script.turn_on
+            entity_id: script.master_bathroom_morning_wakeup_lighting
+    - conditions:
+      - condition: trigger
+        id: 'off'
+      sequence:
+      - service: script.turn_off
+        entity_id: script.master_bathroom_morning_wakeup_lighting
+      - service: light.turn_off
+        entity_id: light.master_bathroom_toilet_light
+      - service: switch.turn_off
+        entity_id: switch.master_bathroom_shower_lights
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.master_bathroom_wakeup
+          value: 30
+- id: 5e1945a3-a48e-4dd5-89ca-da854073533e
+  alias: Master Bathroom Motion Lights
+  trigger:
+  - platform: state
+    entity_id: group.master_bath_occupancy
+    id: 'on'
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: group.master_bath_occupancy
+    id: 'off'
+    from: 'on'
+    to: 'off'
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: 'on'
+      - condition: state
+        entity_id: light.master_bathroom_vanity_lights
+        state: 'off'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: time
+            after: input_datetime.master_bath_day_start
+            before: input_datetime.master_bath_evening_start
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.master_bathroom_vanity_lights
+            data:
+              brightness_pct: '{{ states("input_number.master_bathroom_day_brightness")
+                | int }}
+
+                '
+        - conditions:
+          - condition: time
+            after: input_datetime.master_bath_evening_start
+            before: input_datetime.master_bath_night_start
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.master_bathroom_vanity_lights
+            data:
+              brightness_pct: '{{ states("input_number.master_bathroom_evening_brightness")
+                | int }}
+
+                '
+        - conditions:
+          - condition: time
+            after: input_datetime.master_bath_night_start
+            before: input_datetime.master_bath_morning_start
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.master_bathroom_vanity_lights
+            data:
+              brightness_pct: '{{ states("input_number.master_bathroom_night_brightness")
+                | int }}
+
+                '
+    - conditions:
+      - condition: trigger
+        id: 'off'
+      sequence:
+      - service: light.turn_off
+        entity_id: light.master_bathroom_vanity_lights
+      - service: switch.turn_off
+        entity_id: switch.master_bathroom_shower_lights
+- id: 0088bf22-23a8-4154-8fec-9cc0f4e21571
+  alias: Announce Car Unplugged
+  trigger:
+  - platform: time
+    at: input_datetime.tesla_charging_check
+  condition:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: device_tracker.tesla_location
+      state: home
+    - condition: state
+      state: 'off'
+      entity_id: binary_sensor.tesla_plugged_in
+    - condition: time
+      weekday:
+      - sun
+      - mon
+      - tue
+      - wed
+      - thu
+      before: 00:00:00
+      after: 00:00:00
+  action:
+  - service: script.sonos_say
+    data_template:
+      sonos_entity: media_player.kitchen
+      volume: 0.6
+      message: "{{ [\n  'Pardon me, ',\n  'Excuse me, ',\n  'I do not mean to interrupt,
+        but,',\n  'I hate to interrupt, but,',\n  'I beg your pardon, ',\n  'I do
+        not mean to intrude, but, ',\n  'I am sorry to interrupt, but. ',\n  'Just
+        a quick heads up, '\n  ] | random }}\n{{ [\n  'the Tesla is not plugged in.',\n
+        \ 'your car needs to be plugged in for you to make it to work tomorrow.',\n
+        \ 'plugging in your car tonight will save you on supercharging.',\n  'the
+        Tesla is unplugged. I would plug it in for you. But I lack legs. And Arms.'\n
+        \   ] | random }}"
+  initial_state: true
+- id: '1662605175965'
+  alias: Exterior Overnight Lights
+  description: Turns on the front yard exterior lights when the sun sets and turns
+    them off when the sun rises.
+  trigger:
+  - platform: sun
+    event: sunset
+    offset: 0
+    id: Sets
+  - platform: sun
+    event: sunrise
+    offset: 0
+    id: Rises
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Sets
+      sequence:
+      - type: turn_on
+        device_id: b98da24028c1d5414e5cea7d5982cf57
+        entity_id: switch.garage_outside_lights
+        domain: switch
+      - type: turn_on
+        device_id: 23b96620d64af5a6afe0e30b1dfec870
+        entity_id: switch.exterior_lamp_post
+        domain: switch
+    - conditions:
+      - condition: trigger
+        id: Rises
+      sequence:
+      - type: turn_off
+        device_id: b98da24028c1d5414e5cea7d5982cf57
+        entity_id: switch.garage_outside_lights
+        domain: switch
+      - type: turn_off
+        device_id: 23b96620d64af5a6afe0e30b1dfec870
+        entity_id: switch.exterior_lamp_post
+        domain: switch
+  mode: single

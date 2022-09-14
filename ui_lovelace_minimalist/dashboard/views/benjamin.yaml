@@ -1,0 +1,48 @@
+title: Benjamin's Room
+path: benjamin
+cards:
+  - type: "custom:button-card"
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: "custom:button-card"
+    template: card_media_player
+    entity: media_player.benjamins_room
+    variables:
+      ulm_card_media_player_name: Homepod
+      ulm_card_media_player_enable_volume_slider: false
+
+  - type: "custom:button-card"
+    template: card_title
+    name: Devices
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_light
+        entity: light.nursery_ceiling_fan_light
+        variables:
+          ulm_card_light_enable_slider: true
+          ulm_card_light_enable_color: true
+          ulm_card_light_force_background_color: true
+      - type: custom:button-card
+        template: custom_card_saxel_fan_blue
+        entity: fan.nursery_ceiling_fan
+        name: Benjamin's Fan
+        variables:
+          collapsible: false
+          oscillate_attribute: false
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_power_outlet
+        variables:
+          ulm_card_power_outlet_name: Sound Machine
+        entity: switch.twins_sound_machine
+      - type: "custom:button-card"
+        template: card_power_outlet
+        variables:
+          ulm_card_power_outlet_name: Outlet
+        entity: switch.nursery_outlet

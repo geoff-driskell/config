@@ -1,0 +1,44 @@
+---
+timeout_master_toilet_fan:
+  module: allowance
+  class: Allowance
+  entity: switch.master_bathroom_toilet_fan
+  timeout: 900
+
+timeout_downstairs_bath_fan:
+  module: allowance
+  class: Allowance
+  entity: switch.downstairs_bathroom_fan
+  timeout: 600
+
+timeout_kids_bathroom_light:
+  module: allowance
+  class: Allowance
+  entity: light.kids_bathroom_vanity_lights
+  timeout: 1800
+
+upstairs_hallway_occupancy:
+  module: occupancy_lights
+  class: OccupancyLights
+  blocker: binary_sensor.twins_napping
+  sensor: binary_sensor.upstairs_hallway_occupancy
+  light: light.upstairs_hallway_lights
+  start_morning: "07:30:00"
+  brightness_morning: 35
+  start_day: "09:00:00"
+  brightness_day: 100
+  start_evening: "16:00:00"
+  brightness_evening: 50
+  start_night: "20:00:00"
+  brightness_night: 8
+
+twins_sleep:
+  module: naptime
+  class: Naptime
+
+resident_tracker:
+  module: resident_tracker
+  class: ResidentTracker
+  residents:
+    - person.geoff
+    - person.victoria

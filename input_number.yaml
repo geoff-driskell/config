@@ -1,0 +1,31 @@
+  tires_last_rotated_mi:
+    name: Tires Last Rotated Mileage
+    initial: 29713
+    min: 0
+    max: 200000
+    unit_of_measurement: "mi"
+    mode: box
+  master_bathroom_wakeup:
+    name: Master Bathroom Wakeup Lighting
+    initial: 30
+    min: 30
+    max: 100
+    step: 7
+  master_bathroom_day_brightness:
+    name: Master Bathroom Day Lighting
+    initial: 100
+    min: 1
+    max: 100
+    step: 1
+  master_bathroom_evening_brightness:
+    name: Master Bathroom Evening Brightness
+    initial: 50
+    min: 1
+    max: 100
+    step: 1
+  master_bathroom_night_brightness:
+    name: Master Bathroom Night Brightness
+    initial: 7
+    min: 5
+    max: 40
+    step: 1

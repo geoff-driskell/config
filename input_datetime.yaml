@@ -1,0 +1,20 @@
+tesla_charging_check:
+  name: Tesla Charging Check
+  has_date: false
+  has_time: true
+master_bath_morning_start:
+  name: Master Bath Morning Start
+  has_date: false
+  has_time: true
+master_bath_day_start:
+  name: Master Bath Day Start
+  has_date: false
+  has_time: true
+master_bath_evening_start:
+  name: Master Bath Evening Start
+  has_date: false
+  has_time: true
+master_bath_night_start:
+  name: Master Bath Night Start
+  has_date: false
+  has_time: true

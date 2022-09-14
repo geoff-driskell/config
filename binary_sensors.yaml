@@ -1,0 +1,31 @@
+- platform: template
+  sensors:
+    tesla_park_brake:
+      friendly_name: Parking Brake
+      icon_template: mdi:car-brake-parking
+      value_template: >-
+        {% if is_state('sensor.tesla_shift_state', 'P') %}
+          ON
+        {% else %}
+          OFF
+        {% endif %}
+
+- platform: template
+  sensors:
+    twins_napping:
+      friendly_name: "Twins Napping"
+      unique_id: twins_napping
+      value_template: >-
+        {% if now().hour > 8 and now().hour < 17 %}
+          {% if is_state('input_boolean.avery_naptime', 'on') or is_state('input_boolean.benjamin_naptime', 'on') %}
+            True
+          {% endif %}
+        {% endif %}
+    twins_sleeping:
+      friendly_name: "Twins Sleeping"
+      unique_id: twins_sleeping
+      value_template: >-
+        {% if is_state('input_boolean.avery_naptime', 'on') or is_state('input_boolean.benjamin_naptime', 'on') %}
+          True
+        {% endif %}
+    

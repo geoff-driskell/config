@@ -1,0 +1,299 @@
+title: "Home"
+path: "home"
+cards:
+  - type: "custom:button-card"
+    template: "card_esh_welcome"
+    triggers_update: "input_boolean.minimalist_dropdown"
+    variables:
+      ulm_card_esh_welcome_collapse: input_boolean.minimalist_dropdown
+      ulm_weather: "weather.kofp_daynight"
+      entity_1:
+        nav: "house"
+        icon: "mdi:home"
+        name: "House"
+        color: "blue"
+      entity_2:
+        nav: "lights"
+        icon: "mdi:lightbulb"
+        name: "Lights"
+        color: "yellow"
+      entity_3:
+        nav: "security"
+        icon: "mdi:shield"
+        name: Secure
+        color: "green"
+      entity_4:
+        nav: "network"
+        icon: "mdi:nas"
+        name: Lab
+        color: "purple"
+      entity_5:
+        nav: "network"
+        icon: "mdi:flask"
+        name: Lab
+        color: "red"
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_person
+        variables:
+          ulm_card_person_entity: person.geoff
+          ulm_card_person_use_entity_picture: true
+          ulm_card_person_zone1: zone.home
+          ulm_card_person_zone2: zone.geoff_s_work
+      - type: "custom:button-card"
+        template: card_person
+        variables:
+          ulm_card_person_entity: person.victoria
+          ulm_card_person_use_entity_picture: true
+          ulm_card_person_zone1: zone.home
+          ulm_card_person_zone2: zone.victoria_s_work
+
+  - type: "custom:button-card"
+    template: card_title
+    name: Rooms
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template:
+          - card_room
+          - yellow_on
+        name: Living Room
+        entity: light.living_room_light
+        icon: mdi:ceiling-fan-light
+        tap_action:
+          action: navigate
+          navigation_path: "living"
+        variables:
+          label_use_temperature: false
+          label_use_brightness: true
+          entity_1:
+            entity_id: light.living_room_light
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_2:
+            entity_id: fan.living_room_fan
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_3:
+            entity_id: binary_sensor.kitchen_occupancy
+            templates:
+              - yellow_on
+            tap_action:
+              action: none
+      - type: "custom:button-card"
+        template:
+          - card_room
+          - yellow_on
+        name: Kitchen
+        entity: switch.kitchen_lights
+        icon: mdi:light-recessed
+        tap_action:
+          action: navigate
+          navigation_path: "kitchen"
+        variables:
+          label_use_temperature: false
+          label_use_brightness: false
+          entity_1:
+            entity_id: switch.kitchen_lights
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_2:
+            entity_id: switch.kitchen_island_lights
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_3:
+            entity_id: binary_sensor.kitchen_occupancy
+            templates:
+              - yellow_on
+            tap_action:
+              action: none
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template:
+          - card_room
+          - yellow_on
+        name: Master Bedroom
+        entity: switch.master_bedroom_lamps
+        icon: mdi:lamps
+        tap_action:
+          action: navigate
+          navigation_path: "master"
+        variables:
+          label_use_temperature: false
+          label_use_brightness: true
+          entity_1:
+            entity_id: switch.master_bedroom_lamps
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_2:
+            entity_id: fan.master_bedroom_fan
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_3:
+            entity_id: light.master_bedroom_light
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+      - type: "custom:button-card"
+        template:
+          - card_room
+          - yellow_on
+        name: Master Bathroom
+        entity: light.master_bathroom_vanity_lights
+        icon: mdi:vanity-light
+        tap_action:
+          action: navigate
+          navigation_path: "master_bath"
+        variables:
+          label_use_temperature: false
+          label_use_brightness: true
+          entity_1:
+            entity_id: light.master_bathroom_vanity_lights
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_2:
+            entity_id: switch.master_bathroom_shower_fan
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_3:
+            entity_id: binary_sensor.master_bathroom_occupancy
+            templates:
+              - yellow_on
+            tap_action:
+              action: none
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template:
+          - card_room
+          - yellow_on
+        name: Avery's Room
+        entity: remote.averys_room
+        icon: mdi:remote
+        tap_action:
+          action: navigate
+          navigation_path: "avery"
+        variables:
+          label_use_temperature: false
+          label_use_brightness: false
+          entity_1:
+            entity_id: remote.averys_room
+            templates:
+              - yellow_on
+            tap_action:
+              action: none
+      - type: "custom:button-card"
+        template:
+          - card_room
+          - yellow_on
+        name: Benjamin's Room
+        entity: light.nursery_ceiling_fan_light
+        icon: mdi:ceiling-fan-light
+        tap_action:
+          action: navigate
+          navigation_path: "benjamin"
+        variables:
+          label_use_temperature: false
+          label_use_brightness: true
+          entity_1:
+            entity_id: light.nursery_ceiling_fan_light
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_2:
+            entity_id: fan.nursery_ceiling_fan
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_3:
+            entity_id: switch.twins_sound_machine
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template:
+          - card_room
+          - yellow_on
+        name: Kid's Bathroom
+        entity: light.kids_bathroom_vanity_lights
+        icon: mdi:vanity-light
+        tap_action:
+          action: navigate
+          navigation_path: "kids_bath"
+        variables:
+          label_use_temperature: false
+          label_use_brightness: false
+          entity_1:
+            entity_id: light.kids_bathroom_vanity_lights
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          entity_2:
+            entity_id: switch.kid_bathroom_exhaust_fan
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_3:
+            entity_id: binary_sensor.kid_bathroom_motion
+            templates:
+              - yellow_on
+            tap_action:
+              action: none
+      - type: "custom:button-card"
+        template:
+          - card_room
+          - yellow_on
+        name: Guest Room
+        entity: light.guest_room_light
+        icon: mdi:ceiling-fan-light
+        tap_action:
+          action: navigate
+          navigation_path: "guest"
+        variables:
+          label_use_temperature: false
+          label_use_brightness: true
+          entity_1:
+            entity_id: light.guest_room_light
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle
+          entity_2:
+            entity_id: fan.guest_room_fan
+            templates:
+              - yellow_on
+            tap_action:
+              action: toggle

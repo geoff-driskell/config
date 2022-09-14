@@ -1,0 +1,72 @@
+homeassistant:
+  name: Driskell Home
+  latitude: 37.65525
+  longitude: -77.41344
+  elevation: 170
+  unit_system: imperial
+  currency: USD
+  time_zone: "America/New_York"
+  internal_url: "http://192.168.1.10:8123"
+  external_url: !secret external_url
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+    cache: true
+    cache_dir: /tmp/tts
+    time_memory: 300
+  - platform: amazon_polly
+    aws_access_key_id: !secret aws_key
+    aws_secret_access_key: !secret aws_secret
+    region_name: "us-east-1"
+    text_type: ssml
+    voice: Matthew
+    cache: True
+    engine: neural
+
+proximity:
+  home_tesla:
+    zone: home
+    devices:
+      - device_tracker.tesla_location
+    tolerance: 15
+    unit_of_measurement: mi
+
+mqtt:
+  sensor: !include mqtt_sensor.yaml
+  binary_sensor: !include mqtt_binary_sensor.yaml
+
+template:
+  - sensor:
+    - name: Dishwasher
+      unique_id: c99fa587-cb66-49f6-8780-ded1ba13dc0d
+      state: >
+        {% if states("sensor.dishwasher")|float == 0 %}
+          Off
+        {% elif states("sensor.dishwasher")|float <= 1 %}
+          Idle
+        {% else %}
+          Running
+        {% endif %}
+      icon: >
+        {% if states("sensor.dishwasher")|float <= 1 %}
+          mdi:dishwasher-off
+        {% else %}
+          mdi:dishwasher
+        {% endif %}
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+sensor: !include sensors.yaml
+binary_sensor: !include binary_sensors.yaml
+scene: !include scenes.yaml
+input_boolean: !include input_boolean.yaml
+input_number: !include input_number.yaml
+input_select: !include input_select.yaml
+input_datetime: !include input_datetime.yaml
+frontend:
+  themes: !include_dir_merge_named themes

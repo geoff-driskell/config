@@ -1,0 +1,48 @@
+master_bathroom_lights_w_level:
+  sequence:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ level | int }}
+
+        '
+    target:
+      entity_id: light.master_bathroom_vanity_lights
+master_bathroom_morning_wakeup_lighting:
+  sequence:
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ states("input_number.master_bathroom_wakeup") | int <
+          101 }}'
+      sequence:
+      - service: script.master_bathroom_lights_w_level
+        data:
+          level: '{{ states("input_number.master_bathroom_wakeup") }}'
+      - service: input_number.increment
+        entity_id: input_number.master_bathroom_wakeup
+      - delay: 00:01:00
+  - service: input_number.set_value
+    data:
+      entity_id: input_number.master_bathroom_wakeup
+      value: 30
+sonos_say:
+  alias: Sonos TTS Script
+  sequence:
+  - service: sonos.snapshot
+    data_template:
+      entity_id: '{{ sonos_entity }}'
+  - service: media_player.unjoin
+    data_template:
+      entity_id: '{{ sonos_entity }}'
+  - service: media_player.volume_set
+    data_template:
+      entity_id: '{{ sonos_entity }}'
+      volume_level: '{{ volume }}'
+  - service: tts.amazon_polly_say
+    data_template:
+      entity_id: '{{ sonos_entity }}'
+      message: <speak> <break time="1s"/> "{{ message }}"" </speak>
+  - delay: '{{ delay }}'
+  - service: sonos.restore
+    data_template:
+      entity_id: '{{ sonos_entity }}'
