@@ -23,7 +23,8 @@ import appdaemon.plugins.hass.hassapi as hass
 class OccupancyLights(hass.Hass):
     def initialize(self):
         # Check some Params
-        self.mode = self.get_entity("input_select.house_mode")
+        self.mode_entity = self.get_entity("input_select.house_mode")
+        self.mode = self.get_state("input_select.house_modee")
         self.sensor = self.args["sensor"]
         self.light = self.args["light"]
         self.brightness_morning = self.args["brightness_morning"]
@@ -36,6 +37,7 @@ class OccupancyLights(hass.Hass):
         self.log("App completed initialization.", level="INFO")
 
     def motion(self, entity, attribute, old, new, kwargs):
+        self.mode = self.get_state("input_select.house_mode")
         if new == "on":
             self.log("{0} detected occupancy at {1}.".format(self.sensor, self.time()), level="INFO")
             if self.mode == "Morning" or self.mode == "Morning Quiet":
