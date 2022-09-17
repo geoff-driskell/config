@@ -114,6 +114,7 @@
     - wed
     - thu
     - fri
+    after: 00:00:00
   - alias: Tesla Home
     condition: state
     entity_id: device_tracker.tesla_location
@@ -121,7 +122,7 @@
   action:
   - service: script.sonos_say
     data_template:
-      sonos_entity: media_player.office
+      sonos_entity: media_player.garage
       volume: 0.7
       message: Good morning, Geoffrey. It looks like you are headed to work. Please
         make sure you did not forget your cack!
