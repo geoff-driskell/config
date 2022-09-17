@@ -8,3 +8,12 @@ trash_pickup:
     - Friday
   initial: Friday
   icon: mdi:delete-variant
+
+house_mode:
+  name: House Mode
+  options:
+    - Morning
+    - Day
+    - Evening
+    - Night
+    - Night Quiet
