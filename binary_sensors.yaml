@@ -3,8 +3,48 @@
     tesla_park_brake:
       friendly_name: Parking Brake
       icon_template: mdi:car-brake-parking
+      unique_id: 0c979205-e7cf-4873-93ed-c4744b849d3b
       value_template: >-
         {% if is_state('sensor.tesla_shift_state', 'P') %}
+          ON
+        {% else %}
+          OFF
+        {% endif %}
+
+- platform: template
+  sensors:
+    geoff_tracker:
+      friendly_name: Geoff Tracker
+      device_class: presence
+      unique_id: a678710b-8d96-41f0-bd6a-77529c376976
+      value_template: >-
+        {% if is_state("person.geoff", "home") %}
+          ON
+        {% else %}
+          OFF
+        {% endif %}
+
+- platform: template
+  sensors:
+    victoria_tracker:
+      friendly_name: Victoria Tracker
+      device_class: presence
+      unique_id: 47720cf2-8d30-4450-8740-036ac7b7c9e7
+      value_template: >-
+        {% if is_state("person.victoria", "home") %}
+          ON
+        {% else %}
+          OFF
+        {% endif %}
+
+- platform: template
+  sensors:
+    guest_tracker:
+      friendly_name: Guest Tracker
+      device_class: presence
+      unique_id: 92322343-bcb7-45d2-bdc5-3f0688c642b5
+      value_template: >-
+        {% if is_state("input_boolean.guest_mode", "on") %}
           ON
         {% else %}
           OFF
@@ -28,4 +68,3 @@
         {% if is_state('input_boolean.avery_naptime', 'on') or is_state('input_boolean.benjamin_naptime', 'on') %}
           True
         {% endif %}
-    
