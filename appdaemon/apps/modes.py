@@ -1,7 +1,6 @@
 import hassapi as hass
 import datetime
 import appdaemon
-import globals
 
 #
 # App to manage house modes
@@ -37,7 +36,7 @@ class Modes(hass.Hass):
         self.log("Completed initialization.")
 
     def someone_awake(self, entity, attribute, old, new, kwargs):
-        self.log("{} is awake, start the morning.".format(friendly_name(entity)))
+        self.log("{} is awake, start the morning.".format(self.friendly_name(entity)))
         self.morning_quiet()
 
     def parents_awake(self, entity, attribute, old, new, kwargs):
@@ -57,7 +56,7 @@ class Modes(hass.Hass):
         self.night()
 
     def parents_sleeping(self, entity, attribute, old, new, kwargs):
-        self.log("{} has gone to sleep, start quiet mode.".format(friendly_name(entity)))
+        self.log("{} has gone to sleep, start quiet mode.".format(self.friendly_name(entity)))
         self.night_quiet()
 
     # Main mode functions - set the house up appropriately for the mode in question as well as set the house_mode flag correctly
