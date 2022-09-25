@@ -1,18 +1,35 @@
----
+global_modules:
+  - machine
 upstairs_hallway_occupancy:
   module: occupancy_lights
   class: OccupancyLights
   sensor: binary_sensor.upstairs_hallway_occupancy
   light: light.upstairs_hallway_lights
-  brightness_morning: 35
+  brightness_morning: 15
   brightness_day: 100
   brightness_evening: 50
   brightness_night: 8
-  constrain_input_boolean: input_boolean.enable_motion_detection
-  constrain_state: binary_sensor.twins_napping,on
+  constrain_input_boolean: input_boolean.twins_taking_a_nap,off
 twins_sleep:
   module: naptime
   class: Naptime
+  log: twins_log
 modes:
   module: modes
   class: Modes
+  log: house_log
+kitchen_sound:
+  module: sound
+  class: Sound
+  base: media
+  ip: 192.168.1.10
+  player: media_player.kitchen
+  port: '8123'
+
+garage_sound:
+  module: sound
+  class: Sound
+  base: media
+  ip: 192.168.1.10
+  player: media_player.garage
+  port: '8123'
