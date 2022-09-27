@@ -23,8 +23,6 @@ import appdaemon.plugins.hass.hassapi as hass
 class OccupancyLights(hass.Hass):
     def initialize(self):
         # Check some Params
-        self.mode_entity = self.get_entity("input_select.house_mode")
-        self.mode = self.get_state("input_select.house_modee")
         self.sensor = self.args["sensor"]
         self.light = self.args["light"]
         self.brightness_morning = self.args["brightness_morning"]
@@ -43,13 +41,13 @@ class OccupancyLights(hass.Hass):
             if self.mode == "Morning" or self.mode == "Morning Quiet":
                 self.log("Turning on {0} to morning brightness of {1}".format(self.light, self.brightness_morning), level="INFO")
                 self.turn_on(self.light, brightness_pct=self.brightness_morning)
-            if self.mode == "Day":
+            elif self.mode == "Day":
                 self.log("Turning on {0} to day brightness of {1}".format(self.light, self.brightness_day), level="INFO")
                 self.turn_on(self.light, brightness_pct=self.brightness_day)
-            if self.mode == "Evening":
+            elif self.mode == "Evening":
                 self.log("Turning on {0} to evening brightness of {1}".format(self.light, self.brightness_evening), level="INFO")
                 self.turn_on(self.light, brightness_pct=self.brightness_day)
-            if self.mode == "Night" or self.mode == "Night Quiet":
+            elif self.mode == "Night" or self.mode == "Night Quiet":
                 self.log("Turning on {0} to night brightness of {1}".format(self.light, self.brightness_night), level="INFO")
                 self.turn_on(self.light, brightness_pct=self.brightness_night)
             else:
