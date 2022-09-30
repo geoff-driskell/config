@@ -31,7 +31,7 @@ class Modes(hass.Hass):
         self.listen_state(self.parents_awake, "group.parents_sleeping", old = "on", new = "off")
         self.listen_state(self.everyone_awake, "group.sleep_tracker", old = "on", new = "off")
         self.listen_state(self.bathtime, "binary_sensor.kid_bathroom_motion", new="on", constrain_start_time="17:45:00", constrain_input_select="input_select.house_mode,Day")
-        self.listen_state(self.kids_sleeping, "binary_sensor.twins_sleeping", new = "on")
+        self.listen_state(self.kids_sleeping, "binary_sensor.twins_bed", new = "on")
         self.listen_state(self.parents_sleeping, "group.parents_sleeping", old = "off", new = "on")
         self.log("Completed initialization.")
 
