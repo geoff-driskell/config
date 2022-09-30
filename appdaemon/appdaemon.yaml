@@ -13,3 +13,18 @@ http:
 admin:
 api:
 hadashboard:
+logs:
+  main_log:
+    filename: /config/appdaemon/logs/appdaemon.log
+  access_log:
+    filename: /config/appdaemon/logs/access.log
+  error_log:
+    filename: /config/appdaemon/logs/error.log
+  diag_log:
+    filename: /config/appdaemon/logs/diag.log
+  twins_log:
+    name: Twins
+    filename: /config/appdaemon/logs/twins.log
+  house_log:
+    name: House
+    filename: /config/appdaemon/logs/house.log

@@ -12,6 +12,7 @@ trash_pickup:
 house_mode:
   name: House Mode
   options:
+    - Morning Quiet
     - Morning
     - Day
     - Evening

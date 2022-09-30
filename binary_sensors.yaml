@@ -61,6 +61,13 @@
             True
           {% endif %}
         {% endif %}
+    twins_bed:
+      friendly_name: "Twins Down for the Night"
+      unique_id: 097ba957-61d4-4bca-be5a-1d1fdbf77cd8
+      value_template: >-
+        {% if is_state('binary_sensor.twins_napping', 'off') and is_state('binary_sensor.twins_sleeping', 'on') %}
+          True
+        {% endif %}
     twins_sleeping:
       friendly_name: "Twins Sleeping"
       unique_id: twins_sleeping

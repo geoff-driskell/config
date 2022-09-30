@@ -5,7 +5,7 @@ upstairs_hallway_occupancy:
   class: OccupancyLights
   sensor: binary_sensor.upstairs_hallway_occupancy
   light: light.upstairs_hallway_lights
-  brightness_morning: 15
+  brightness_morning: 10
   brightness_day: 100
   brightness_evening: 50
   brightness_night: 8

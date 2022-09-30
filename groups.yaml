@@ -17,7 +17,7 @@ sleep_tracker:
   entities:
     - input_boolean.geoff_sleeping
     - input_boolean.victoria_sleeping
-    - binary_sensor.twins_sleeping
+    - input_boolean.twins_down_for_the_night
 
 parents_sleeping:
   name: Parents Sleeping
