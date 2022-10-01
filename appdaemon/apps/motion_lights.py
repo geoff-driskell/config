@@ -1,27 +1,72 @@
+"""
+Giles House Motion Lights
+"""
+
 from collections.abc import Coroutine, Iterable
 from copy import deepcopy
 from datetime import time
-from xml.dom.minidom import Entity
 import appdaemon.plugins.hass.hassapi as hass
 from typing import Any
 from enum import Enum
 import logging
+from appdaemon.appdaemon import AppDaemon
 
-APP_NAME = "MOTION_LIGHTS"
+APP_NAME = "GilesLights"
 APP_ICON = "💡"
 
 DEFAULT_NAME = "mode"
 DEFAULT_LIGHT_SETTING = 100
 DEFAULT_DELAY = 0
 DEFAULT_MODES: list[dict[str, str | int]] = [
-    dict(mode="Morning Quiet", light=15, fade_to=None, fade_time=None),
-    dict(mode="Morning", light=15, fade_to=None, fade_time=None),
-    dict(mode="Day", light=15, fade_to=None, fade_time=None),
-    dict(mode="Evening", light=15, fade_to=None, fade_time=None),
-    dict(mode="Night", light=15, fade_to=None, fade_time=None),
-    dict(mode="Night Quiet", light=15, fade_to=None, fade_time=None),
+    dict(mode="Morning Quiet", light=15, fade_up=False, fade_time=None),
+    dict(mode="Morning", light=15, fade_up=False, fade_time=None),
+    dict(mode="Day", light=15, fade_up=False, fade_time=None),
+    dict(mode="Evening", light=15, fade_up=False, fade_time=None),
+    dict(mode="Night", light=15, fade_up=False, fade_time=None),
+    dict(mode="Night Quiet", light=15, fade_up=False, fade_time=None),
 ]
 DEFAULT_LOG_LEVEL = "INFO"
+SECONDS_PER_MIN: int = 60
+
+class Room:
+    def __init__(
+        self,
+        name: str,
+        room_lights: set[str] = set(),
+        motion: set[str] = set(),
+        humidity: set[str] = set(),
+        illuminance: set[str] = set(),
+        push_data: dict[str, dict[str, int | str]] = {},
+        appdaemon: AppDaemon = None
+    ) -> None:
+        
+        # Store the room name
+        self.name: str = name
+
+        self.room_lights: set[str] = room_lights
+
+        self.motion: set[str] = motion
+
+        self.humidity: set[str] = humidity
+
+        self.illuminance: set[str] = illuminance
+
+        self.handles: dict[str, str] = {}
+
+        self.push_data: dict[str, dict[str, int | str]] = push_data
+
+        self.handles_lights: set[str] = set()
+
+        self._ad = appdaemon
+    
+    @property
+    def lights_dimmable(self) -> list[str]:
+        return [light for light in self.room_lights if light.startswith("light.")]
+    
+    @property
+    def lights_non_dimmable(self) -> list[str]:
+        return [light for light in self.room_lights if light.startswith("switch.")]
+
 class EntityType(Enum):
     LIGHT = 1
     SWITCH = 2
@@ -38,7 +83,7 @@ SENSORS_REQUIRED = [EntityType.MOTION.idx]
 SENSORS_OPTIONAL = [EntityType.HUMIDITY.idx, EntityType.ILLUMINANCE.idx]
 
 class OccupancyLights(hass.Hass):
-    def hass_logger(self, msg: str, *args: Any, level: int | None = None, icon: str | None = None, **kwargs: Any,) -> None:
+    def lg(self, msg: str, *args: Any, level: int | None = None, icon: str | None = None, **kwargs: Any,) -> None:
         kwargs.setdefault("ascii_encode", False)
 
         level = level if level else self.loglevel
@@ -53,8 +98,7 @@ class OccupancyLights(hass.Hass):
         
         self.call_service("logbook/log", name=ha_name, message=message)
 
-
-    def list_or_string(self, list_or_string: list[str] | set[str] | str | Any) -> set[str]:
+    def listr(self, list_or_string: list[str] | set[str] | str | Any) -> set[str]:
         entity_list: list[str] = []
 
         if isinstance(list_or_string, str):
@@ -94,8 +138,8 @@ class OccupancyLights(hass.Hass):
             EntityType.ILLUMINANCE: self.args.pop("illuminance_threshold", None)
         }
 
-        self.disable_switch_entities: set[str] = self.list_or_string(self.args.pop("disable_switch_entities", set()))
-        self.disable_switch_states: set[str] = self.list_or_string(self.args.pop("disable_switch_states", set(["off"])))
+        self.disable_switch_entities: set[str] = self.listr(self.args.pop("disable_switch_entities", set()))
+        self.disable_switch_states: set[str] = self.listr(self.args.pop("disable_switch_states", set(["off"])))
 
         self.active: dict[str, int | str] = {}
 
@@ -107,12 +151,12 @@ class OccupancyLights(hass.Hass):
         
         self.sensors: dict[str, Any] = {}
 
-        self.sensors[EntityType.MOTION] = self.list_or_string(self.args.pop("motion", None))
+        self.sensors[EntityType.MOTION] = self.listr(self.args.pop("motion", None))
 
         self.room = Room(
             name=self.room_name,
             room_lights=self.lights,
-            motion=self.sensors[EntityType.MOTION],
+            motion=self.sensors[EntityType.MOTION.idx],
             appdaemon=self.get_ad_api()
         )
         
@@ -124,11 +168,11 @@ class OccupancyLights(hass.Hass):
         
         for sensor_type in SENSORS_OPTIONAL:
             if sensor_type in self.thresholds and self.thresholds[sensor_type]:
-                self.sensors[sensor_type] = self.list_or_string(self.args.pop(sensor_type, None))
+                self.sensors[sensor_type] = self.listr(self.args.pop(sensor_type, None))
             else:
                 del self.thresholds[sensor_type]
         
-        modes = self.build_modes(self.args.pop("modes", DEFAULT_MODES))
+        self.modes_dict = self.build_modes(self.args.pop("modes", DEFAULT_MODES))
 
 
         # Subscribe to sensors
@@ -141,53 +185,52 @@ class OccupancyLights(hass.Hass):
                 self.listen_state(self.motion_cleared, entity_id=sensor, new=self.states["motion_off"],)
             )
 
-
-        self.listen_state(self.switch_mode, entity_id="input_select.house_mode")
-
-        self.motion_sensors: set[str] = self.args.pop("motion", None)
-        self.humidity_sensor = self.args.pop("humidity", None)
-        self.morning_quiet_light = self.args.pop("morning_quiet_light", None)
-        self.morning_light = self.args.pop("morning_light", None)
-        self.day_light = self.args.pop("day_light", None)
-        self.evening_light = self.args.pop("evening_light", None)
-        self.night_light = self.args.pop("night_light", None)
-        self.night_quiet_light = self.args.pop("night_quiet_light", None)
-        self.log("App completed initialization.", level="INFO")
-
     def switch_mode(self, kwargs: dict[str, Any]) -> None:
-        mode = self.get_state("input_select.house_mode")
-        self.active["mode"] = mode
-        if mode is not None:
-            if mode == "Morning Quiet":
-                self.active["light_setting"] = self.morning_quiet_light
-            elif mode == "Morning Quiet":
-                self.active["light_setting"] = self.morning_light
-            elif mode == "Day":
-                self.active["light_setting"] = self.day_light
-            elif mode == "Evening":
-                self.active["light_setting"] = self.evening_light
-            elif mode == "Night":
-                self.active["light_setting"] = self.night_light
-            elif mode == "Night Quiet":
-                self.active["light_setting"] = self.night_quiet_light
-            else:
-                self.log("The current house mode ({0}) is invalid, doing nothing.".format(self.mode))
-    
+        self.active_mode = self.get_state("input_select.house_mode")
+        self.active = self.modes_dict.get(self.active_mode)
+
     def motion_cleared(self, entity, attribute, old, new, kwargs):
         if all(
             [
                 self.get_state(sensor) == self.states["motion_off"]
-                for sensor in self.sensors["motion"]
+                for sensor in self.sensors[EntityType.MOTION.idx]
             ]
         ):
-    
+            self.refresh_timer()
+        else:
+            self.clear_handles()
+
     def motion_detected(self, entity, attribute, old, new, kwargs):
         self.clear_handles()
-        if not self.get_state(self.light) == "on":
-            self.light_on()
-    
+        if self.is_disabled():
+            return
+        if not any(
+            self.get_state(light) == "on" for light in self.lights
+        ):
+            self.lights_on()
+        self.refresh_timer()
 
-    def clear_handles(self):
+    def clear_handles(self, handles: set[str] = None) -> None:
+        if not handles:
+            handles = deepcopy(self.room.handles_lights)
+            self.room.handles_lights.clear()
+        [self.cancel_timer(handle) for handle in handles if self.timer_running(handle) ]
+
+    def refresh_timer(self) -> None:
+        self.clear_handles()
+        handle = self.run_in(self.lights_off, self.active.get("delay"))
+        self.room.handles_lights.add(handle)
+    
+    def is_disabled(self) -> bool:
+        pass
+
+    def is_blocked(self) -> bool:
+        pass
+
+    def fade_on_lights(self, _: Any) -> None:
+        pass
+
+    def turn_off_lights(self, kwargs: dict[str, Any]) -> None:
         pass
 
     def lights_on(self):
@@ -207,7 +250,7 @@ class OccupancyLights(hass.Hass):
                         self.call_service("homeassistant/turn_on", entity_id=self.light, brightness_pct=light_setting)
         else:
             raise ValueError(f"Invalid brightness/scene: {light_setting!s}")
-    
+
     def lights_off(self):
         if self.is_disabled() or self.is_blocked():
             return
@@ -219,9 +262,26 @@ class OccupancyLights(hass.Hass):
         
         for entity in self.lights:
             self.call_service("homeassistant/turn_off", entity_id=entity)
-    
+
     def turned_off(self):
         self.clear_handles()
 
+    def build_modes(self, modes: list[Any]) -> dict[str, dict[str, int | str | bool]] | None:
+        mode: dict[str, dict[str, int | str | bool]] = {}
+        for idx, mode in enumerate(modes):
+            mode_name = mode.get("name", f"{DEFAULT_NAME}_{idx}")
+            mode_delay = mode.get("delay", self.delay)
+            mode_light_setting = mode.get("light", DEFAULT_LIGHT_SETTING)
+            mode_fade_up = mode.get("fade_up", False)
+            mode_fade_time = mode.get("fade_time", None)
 
+            # configuration for this mode
+            mode[mode_name] = dict(
+                delay=mode_delay,
+                light_setting=mode_light_setting,
+                fade_up=mode_fade_up,
+                fade_time=mode_fade_time,
+            )
+        
+        return mode
 
