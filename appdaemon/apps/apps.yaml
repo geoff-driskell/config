@@ -1,15 +1,28 @@
 global_modules:
   - machine
-upstairs_hallway_occupancy:
-  module: occupancy_lights
-  class: OccupancyLights
-  sensor: binary_sensor.upstairs_hallway_occupancy
-  light: light.upstairs_hallway_lights
-  brightness_morning: 10
-  brightness_day: 100
-  brightness_evening: 50
-  brightness_night: 8
-  constrain_input_boolean: input_boolean.twins_taking_a_nap,off
+upstairs_hallway_lights:
+  module: automotionlight
+  class: AutoMotionLight
+  log: lights_log
+  room: Upstairs Hallway
+  delay: 1
+  motion_state_on: "on"
+  motion_state_off: "off"
+  disable_switch_entities:
+    - input_boolean.disable_motion_detection
+    - input_boolean.twins_taking_a_nap
+  disable_switch_states: "on"
+  modes:
+    - { mode: Morning Quiet, light: 15 }
+    - { mode: Morning, light: 20 }
+    - { mode: Day, light: 100 }
+    - { mode: Evening, light: 50 }
+    - { mode: Night, light: 15 }
+    - { mode: Night Quiet, light: 8 }
+  motion: 
+    - binary_sensor.upstairs_hallway_occupancy
+  lights: 
+    - light.upstairs_hallway_lights
 twins_sleep:
   module: naptime
   class: Naptime
@@ -33,3 +46,174 @@ garage_sound:
   ip: 192.168.1.10
   player: media_player.garage
   port: '8123'
+
+mudroom_lights:
+  module: automotionlight
+  class: AutoMotionLight
+  log: lights_log
+  room: Mudroom
+  motion_state_on: "on"
+  motion_state_off: "off"
+  disable_switch_entities:
+    - input_boolean.disable_motion_detection
+  disable_switch_states: "on"
+  delay: 10
+  modes:
+    - { mode: "Morning Quiet", light: 100 }
+    - { mode: "Morning", light: 100 }
+    - { mode: "Day", light: 100 }
+    - { mode: "Evening", light: 100 }
+    - { mode: "Night", light: 100 }
+    - { mode: "Night Quiet", light: 100 }
+
+  # You can specify a light group or list of lights here
+  lights:
+    - switch.mudroom_lights
+
+  # You can specify a list of motion sensors here
+  motion:
+    - binary_sensor.mudroom_motion
+
+kitchen_lights:
+  module: automotionlight
+  class: AutoMotionLight
+  log: lights_log
+  room: Kitchen
+  motion_state_on: "on"
+  motion_state_off: "off"
+  disable_switch_entities:
+    - input_boolean.disable_motion_detection
+    - input_boolean.quiet_mode
+  disable_switch_states: "on"
+  delay: 10
+  modes:
+    - { mode: Morning Quiet, light: "scene.dim_kitchen" }
+    - { mode: Morning, light: "scene.dim_kitchen" }
+    - { mode: Day, light: "scene.brightest_kitchen" }
+    - { mode: Evening, light: "scene.bright_kitchen" }
+    - { mode: Night, light: "scene.dim_kitchen" }
+    - { mode: Night Quiet, light: "scene.dim_kitchen" }
+
+  # You can specify a light group or list of lights here
+  lights:
+    - switch.kitchen_island_lights
+    - switch.kitchen_lights
+
+  # You can specify a list of motion sensors here
+  motion:
+    - binary_sensor.kitchen_occupancy
+
+downstairs_bathroom_lights:
+  module: automotionlight
+  class: AutoMotionLight
+  log: lights_log
+  motion_state_on: "on"
+  motion_state_off: "off"
+  room: Downstairs Bathroom
+  disable_switch_entities:
+    - input_boolean.disable_motion_detection
+  disable_switch_states: "on"
+  delay: 120
+  modes:
+    - { mode: Morning Quiet, light: 100 }
+    - { mode: Morning, light: 100 }
+    - { mode: Day, light: 100 }
+    - { mode: Evening, light: 100 }
+    - { mode: Night, light: 100 }
+    - { mode: Night Quiet, light: 100 }
+
+  illuminance: sensor.downstairs_bathroom_illuminance
+  illuminance_threshold: 100
+
+  # You can specify a light group or list of lights here
+  lights:
+    - switch.downstairs_bathroom_light
+
+  # You can specify a list of motion sensors here
+  motion:
+    - binary_sensor.downstairs_bathroom_motion
+
+kids_bathroom_lights:
+  module: automotionlight
+  class: AutoMotionLight
+  log: lights_log
+  delay: 10
+  motion_state_on: "on"
+  motion_state_off: "off"
+  room: Kid's Bathroom
+  disable_switch_entities:
+    - input_boolean.disable_motion_detection
+  disable_switch_states: "on"
+  modes:
+    - { mode: Morning Quiet, light: 20, delay: 120 }
+    - { mode: Morning, light: 35, delay: 120 }
+    - { mode: Day, light: 100, delay: 300 }
+    - { mode: Evening, light: 50, delay: 240 }
+    - { mode: Night, light: 15, delay: 60 }
+    - { mode: Night Quiet, light: 8, delay: 30 }
+
+  humidity:
+    - sensor.kid_bathroom_humidity
+  humidity_threshold: 60
+
+  # You can specify a light group or list of lights here
+  lights:
+    - light.kids_bathroom_vanity_lights
+
+  # You can specify a list of motion sensors here
+  motion:
+    - binary_sensor.kid_bathroom_motion
+
+master_toilet_lights:
+  module: automotionlight
+  class: AutoMotionLight
+  log: lights_log
+  delay: 10
+  motion_state_on: "on"
+  motion_state_off: "off"
+  room: Master Bathroom Toilet
+  disable_switch_entities:
+    - input_boolean.disable_motion_detection
+  disable_switch_states: "on"
+  modes:
+    - { mode: Morning Quiet, light: 20, delay: 120 }
+    - { mode: Morning, light: 35, delay: 120 }
+    - { mode: Day, light: 100, delay: 300 }
+    - { mode: Evening, light: 50, delay: 240 }
+    - { mode: Night, light: 25, delay: 60 }
+    - { mode: Night Quiet, light: 15, delay: 30 }
+
+  # You can specify a light group or list of lights here
+  lights:
+    - light.master_bathroom_toilet_light
+
+  # You can specify a list of motion sensors here
+  motion:
+    - binary_sensor.master_bathroom_toilet_motion
+
+victorias_closet_lights:
+  module: automotionlight
+  class: AutoMotionLight
+  log: lights_log
+  room: Victoria's Closet
+  motion_state_on: "on"
+  motion_state_off: "off"
+  disable_switch_entities:
+    - input_boolean.disable_motion_detection
+  disable_switch_states: "on"
+  delay: 10
+  modes:
+    - { mode: "Morning Quiet", light: 100 }
+    - { mode: "Morning", light: 100 }
+    - { mode: "Day", light: 100 }
+    - { mode: "Evening", light: 100 }
+    - { mode: "Night", light: 100 }
+    - { mode: "Night Quiet", light: 100 }
+
+  # You can specify a light group or list of lights here
+  lights:
+    - switch.victorias_closet_lights
+
+  # You can specify a list of motion sensors here
+  motion:
+    - binary_sensor.victoria_closet_motion

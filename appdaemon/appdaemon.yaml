@@ -28,3 +28,6 @@ logs:
   house_log:
     name: House
     filename: /config/appdaemon/logs/house.log
+  lights_log:
+    name: Lights
+    filename: /config/appdaemon/logs/lights.log
