@@ -2,6 +2,7 @@ import appdaemon.plugins.hass.hassapi as hass
 
 class Allowance(hass.Hass):
     def initialize(self):
+        # pylint: disable=attribute-defined-outside-init
         self.log("initialize()", level="DEBUG")
         self.log("args: {0}".format(self.args), level="DEBUG")
 
