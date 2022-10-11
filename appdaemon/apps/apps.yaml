@@ -27,6 +27,10 @@ twins_sleep:
   module: naptime
   class: Naptime
   log: twins_log
+
+shower_light:
+  module: shower_light
+  class: ShowerLight
 modes:
   module: modes
   class: Modes
@@ -57,7 +61,7 @@ mudroom_lights:
   disable_switch_entities:
     - input_boolean.disable_motion_detection
   disable_switch_states: "on"
-  delay: 10
+  delay: 75
   modes:
     - { mode: "Morning Quiet", light: 100 }
     - { mode: "Morning", light: 100 }
@@ -113,7 +117,7 @@ downstairs_bathroom_lights:
   disable_switch_entities:
     - input_boolean.disable_motion_detection
   disable_switch_states: "on"
-  delay: 120
+  delay: 500
   modes:
     - { mode: Morning Quiet, light: 100 }
     - { mode: Morning, light: 100 }
@@ -217,3 +221,63 @@ victorias_closet_lights:
   # You can specify a list of motion sensors here
   motion:
     - binary_sensor.victoria_closet_motion
+
+master_bathroom_lights:
+  module: automotionlight
+  class: AutoMotionLight
+  log: lights_log
+  delay: 1
+  motion_state_on: "on"
+  motion_state_off: "off"
+  room: Master Bathroom
+  disable_switch_entities:
+    - input_boolean.disable_motion_detection
+  disable_switch_states: "on"
+  modes:
+    - { mode: Morning Quiet, light: 20, fade_start: 20, fade_end: 100, fade_delay: 11, fade_step: 1 }
+    - { mode: Morning, light: 35 }
+    - { mode: Day, light: 100 }
+    - { mode: Evening, light: 50 }
+    - { mode: Night, light: 25 }
+    - { mode: Night Quiet, light: 15 }
+
+  # You can specify a light group or list of lights here
+  lights:
+    - light.master_bathroom_vanity_lights
+
+  # You can specify a list of motion sensors here
+  motion:
+    - binary_sensor.master_bathroom_toilet_motion
+    - binary_sensor.master_bathroom_occupancy
+
+allowance:
+  module: allowance
+  class: Allowance
+  timeout: 1800
+  entities:
+    - switch.downstairs_bathroom_fan
+    - switch.master_bathroom_shower_fan
+    - switch.master_bathroom_toilet_fan
+    - switch.kid_bathroom_exhaust_fan
+    - switch.server_room_utility_lights
+
+outside_lights:
+  module: outside_lights
+  class: OutsideLights
+  lights:
+    - switch.exterior_lamp_post
+    - switch.garage_outside_lights
+
+pantry_light:
+  module: door_light
+  class: DoorLight
+  door: binary_sensor.pantry_door
+  lights:
+    - switch.pantry_main_lights
+
+server_light:
+  module: door_light
+  class: DoorLight
+  door: binary_sensor.server_room_door
+  lights:
+    - switch.server_room_main_lights
