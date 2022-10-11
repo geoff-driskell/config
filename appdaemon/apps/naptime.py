@@ -1,9 +1,14 @@
-from lzma import is_check_supported
-import appdaemon.plugins.hass.hassapi as hass
+"""
+Twins Naptime Library
+"""
 from datetime import timedelta
+import appdaemon.plugins.hass.hassapi as hass
 
 class Naptime(hass.Hass):
+    """The naptime class."""
     def initialize(self):
+        """Initialize naptime."""
+        # pylint: disable=attribute-defined-outside-init
         self.avery_asleep = self.get_entity("input_boolean.avery_naptime")
         self.avery_asleep_timer = None
         self.avery_asleep_datetime = self.get_entity("input_datetime.avery_asleep_since")
@@ -82,7 +87,11 @@ class Naptime(hass.Hass):
         self.turn_off("fan.averys_bedroom_ceiling_fan")
 
         # Turn on her light
-        self.turn_on("light.averys_bedroom_ceiling_fan_light", brightness_pct = "15")
+        if self.get_state("light.averys_bedroom_ceiling_fan_light") == "on":
+            self.log("Avery's light is already on, I'm not going to change it.")
+        else:
+            self.log("Turning on Avery's light.")
+            self.turn_on("light.averys_bedroom_ceiling_fan_light", brightness_pct = "15")
 
     def benjamin_awake(self, entity, attribute, old, new, kwargs):
         #TODO: Calculate the time that Benjamin slept
@@ -112,7 +121,11 @@ class Naptime(hass.Hass):
         self.turn_off("switch.twins_sound_machine")
 
         # Turn on his light
-        self.turn_on("light.nursery_ceiling_fan_light", brightness_pct = "15")
+        if self.get_state("light.nursery_ceiling_fan_light") == "on":
+            self.log("Benjamin's light is already on, I'm not going to change it.")
+        else:
+            self.log("Turning benjamin's light on.")
+            self.turn_on("light.nursery_ceiling_fan_light", brightness_pct = "15")
     
     def avery_notifier(self, kwargs):
         title = "Avery Naptime"
