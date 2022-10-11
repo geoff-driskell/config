@@ -1,7 +1,3 @@
-- platform: time_date
-  display_options:
-    - "time"
-
 - platform: template
   sensors:
     tesla_est_battery_range_mi:
@@ -70,13 +66,13 @@
 - platform: mqtt_room
   device_id: "Geoff-iPhone"
   name: "Geoff's iPhone"
-  state_topic: 'espresense/rooms'
+  state_topic: "espresense/rooms"
   timeout: 10
   away_timeout: 10
 
 - platform: mqtt_room
   device_id: "roomAssistant:a7bfcc9a-9afc-4602-af98-41ed2bcb9150"
   name: "Victoria BLE"
-  state_topic: 'espresense/rooms'
+  state_topic: "espresense/rooms"
   timeout: 10
   away_timeout: 10
