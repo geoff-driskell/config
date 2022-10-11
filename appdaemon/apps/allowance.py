@@ -1,33 +1,38 @@
+"""
+Set a maximum on time for certain items.
+"""
+import asyncio
+from typing import Any
+from collections.abc import Coroutine
 import appdaemon.plugins.hass.hassapi as hass
 
+DEFAULT_TIMEOUT = 2700
+
 class Allowance(hass.Hass):
-    def initialize(self):
+    """Main class."""
+    async def initialize(self):
+        """Initialize the class."""
         # pylint: disable=attribute-defined-outside-init
-        self.log("initialize()", level="DEBUG")
-        self.log("args: {0}".format(self.args), level="DEBUG")
+        # get a real dict for the configuration
+        self.args: dict[str, Any] = dict(self.args)
 
-        self.timeout = 600
-        self.handle = None
+        self.timeout = self.args.get("timeout", DEFAULT_TIMEOUT)
+        # define light entities switched by automotionlight
+        self.gv_entities: set[str] = self.args.pop("entities", set())
 
-        if "entity" in self.args:
-            self.listen_state(self.allowance, self.args["entity"], timeout=self.args["timeout"])
-            if "timeout" in self.args:
-                self.timeout = int(self.args["timeout"])
-        else:
-            self.log("No entity specified, nothing to do.", level="WARNING")
-    
-    def allowance(self, entity, attribute, old, new, kwargs):
-        self.log("allowance({0}, {1}, {2}, {3}, {4}".format(entity, attribute, old, new, kwargs), level="DEBUG")
+        listener: set[Coroutine[Any, Any, Any]] = set()
+        for entity in self.gv_entities:
+            listener.add(
+                self.listen_state(self.timeout_reached,
+                entity_id=entity,
+                new="on",
+                duration=self.timeout)
+            )
 
-        if new != old:
-            if new == "on":
-                self.log("Scheduling timer for {0} seconds".format(self.timeout), level="INFO")
-                self.handle = self.run_in(self.delayed_action, self.timeout)
-            elif new == "off":
-                self.log("Cancelling timer {0}".format(self.handle), level="INFO")
-                self.cancel_timer(self.handle)
-    
-    def delayed_action(self, kwargs):
-        self.log("turn_off()", level="DEBUG")
+        await asyncio.gather(*listener)
 
-        self.turn_off(self.args["entity"])
+    async def timeout_reached(
+        self, entity: str, attribute: str, old: str, new: str, _: dict[str, Any]
+    ) -> None:
+        """Turn off the entity if it has been on too long."""
+        await self.turn_off(entity_id=entity)
