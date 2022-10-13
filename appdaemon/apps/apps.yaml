@@ -211,8 +211,8 @@ master_bathroom_lights:
     - input_boolean.disable_motion_detection
   disable_switch_states: "on"
   modes:
-    - { mode: Morning Quiet, light: 20, fade_start: 20, fade_end: 100, fade_delay: 11, fade_step: 1 }
-    - { mode: Morning, light: 35 }
+    - { mode: Morning Quiet, light: 20 }
+    - { mode: Morning, light: 20 }
     - { mode: Day, light: 100 }
     - { mode: Evening, light: 50 }
     - { mode: Night, light: 25 }

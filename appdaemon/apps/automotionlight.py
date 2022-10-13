@@ -296,9 +296,6 @@ class AutoMotionLight(hass.Hass):
 
         self.active[self.active_mode] = self.mode_settings.get(self.active_mode)
 
-        # experimental fade on feature
-        self.fading: bool = False
-
         # set up event listener for each sensor
         listener: set[Coroutine[Any, Any, Any]] = set()
         for sensor in self.sensors[EntityType.MOTION.idx]:
@@ -365,10 +362,6 @@ class AutoMotionLight(hass.Hass):
         self.active.update(mode_settings) 
         # = mode_settings.get("delay")
         # self.active["light_setting"] = mode_settings.get("light_setting")
-        # self.active["fade_start"] = mode_settings.get("fade_start")
-        # self.active["fade_end"] =   mode_settings.get("fade_end")
-        # self.active["fade_delay"] = mode_settings.get("fade_delay")
-        # self.active["fade_step"] =  mode_settings.get("fade_step")
         self.aml_log(self.active)
 
         if mode is not None:
@@ -467,7 +460,6 @@ class AutoMotionLight(hass.Hass):
             f"'{data['entity_id'].replace(EntityType.MOTION.prefix, '')}'",
             level=logging.DEBUG,
         )
-        fade_start = self.active["fade_start"]
 
         # check if automotionlight is disabled via home assistant entity
         self.aml_log(
@@ -485,11 +477,7 @@ class AutoMotionLight(hass.Hass):
                 f"{stack()[0][3]}: switching on ",
                 level=logging.DEBUG,
             )
-            if fade_start is not None:
-                self.fading = True
-                self.fade_on_lights()
-            else:
-                await self.lights_on()
+            await self.lights_on()
         else:
             self.aml_log(
                 f"{stack()[0][3]}: light in {self.room.name.capitalize()} already on → refreshing "
@@ -595,26 +583,6 @@ class AutoMotionLight(hass.Hass):
                     return True
 
         return False
-
-    async def fade_on_lights(self) -> None:
-        """Fade on the lights"""
-        start = self.active.get("fade_start")
-        end = self.active.get("fade_end")
-        delay = self.active.get("fade_delay")
-        step = self.active.get("fade_step")
-
-        while start <= end and self.fading:
-            await self.lights_on(force=True)
-            start = await self.step_counter(start=start, step=step)
-            self.active["light_setting"] = start
-            self.sleep(delay=delay)
-            if not self.fading:
-                break
-
-    async def step_counter(self, start: int, step: int) -> int:
-        """Increment the light brightness"""
-        start += step
-        return start
 
     async def turn_off_lights(self, kwargs: dict[str, Any]) -> None:
         """Turn off the lights"""
@@ -765,7 +733,6 @@ class AutoMotionLight(hass.Hass):
         for entity in self.lights:
             if self.only_own_events:
                 if entity in self._switched_on_by_automotionlight:
-                    self.fading = False
                     self.active["light_setting"] = self.mode_settings[self.active_mode]["light_setting"]
                     await self.call_service(
                         "homeassistant/turn_off", entity_id=entity  # type:ignore
@@ -773,7 +740,6 @@ class AutoMotionLight(hass.Hass):
                     self._switched_on_by_automotionlight.remove(entity)
                     at_least_one_turned_off = True
             else:
-                self.fading = False
                 self.active["light_setting"] = self.mode_settings[self.active_mode]["light_setting"]
                 await self.call_service(
                     "homeassistant/turn_off", entity_id=entity  # type:ignore
@@ -802,28 +768,16 @@ class AutoMotionLight(hass.Hass):
             mode_name = mode.get("mode", f"{DEFAULT_NAME}_{idx}")
             mode_delay = mode.get("delay", self.delay)
             mode_light_setting = mode.get("light", DEFAULT_LIGHT_SETTING)
-            mode_fade_start = mode.get("fade_start", None)
-            mode_fade_end = mode.get("fade_end", None)
-            mode_fade_delay = mode.get("fade_delay", None)
-            mode_fade_step = mode.get("fade_step", None)
 
             # configuration for this mode
             mode_dict[mode_name] = {}
             mode_dict[mode_name]["light_setting"] = mode_light_setting
             mode_dict[mode_name]["delay"] = mode_delay
-            mode_dict[mode_name]["fade_start"] = mode_fade_start
-            mode_dict[mode_name]["fade_end"] = mode_fade_end
-            mode_dict[mode_name]["fade_delay"] = mode_fade_delay
-            mode_dict[mode_name]["fade_step"] = mode_fade_step
 
             # check if this mode should be active now
             if mode_name == self.active_mode:
                 self.active["delay"] = mode_delay
                 self.active["light_setting"] = mode_light_setting
-                self.active["fade_start"] = mode_fade_start
-                self.active["fade_end"] = mode_fade_end
-                self.active["fade_delay"] = mode_fade_delay
-                self.active["fade_step"] = mode_fade_step
 
         return mode_dict
 
