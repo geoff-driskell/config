@@ -7,6 +7,11 @@ twins_sleep:
 shower_light:
   module: shower_light
   class: ShowerLight
+master_bedtime:
+  module: bedtime
+  class: Bedtime
+  delay: 600
+  tv_delay: 300
 modes:
   module: modes
   class: Modes
