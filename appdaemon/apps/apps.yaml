@@ -1,5 +1,30 @@
 global_modules:
   - machine
+twins_sleep:
+  module: naptime
+  class: Naptime
+  log: twins_log
+shower_light:
+  module: shower_light
+  class: ShowerLight
+modes:
+  module: modes
+  class: Modes
+  log: house_log
+kitchen_sound:
+  module: sound
+  class: Sound
+  base: media
+  ip: 192.168.1.10
+  player: media_player.kitchen
+  port: '8123'
+garage_sound:
+  module: sound
+  class: Sound
+  base: media
+  ip: 192.168.1.10
+  player: media_player.garage
+  port: '8123'
 upstairs_hallway_lights:
   module: automotionlight
   class: AutoMotionLight
@@ -23,34 +48,6 @@ upstairs_hallway_lights:
     - binary_sensor.upstairs_hallway_occupancy
   lights: 
     - light.upstairs_hallway_lights
-twins_sleep:
-  module: naptime
-  class: Naptime
-  log: twins_log
-
-shower_light:
-  module: shower_light
-  class: ShowerLight
-modes:
-  module: modes
-  class: Modes
-  log: house_log
-kitchen_sound:
-  module: sound
-  class: Sound
-  base: media
-  ip: 192.168.1.10
-  player: media_player.kitchen
-  port: '8123'
-
-garage_sound:
-  module: sound
-  class: Sound
-  base: media
-  ip: 192.168.1.10
-  player: media_player.garage
-  port: '8123'
-
 mudroom_lights:
   module: automotionlight
   class: AutoMotionLight
@@ -69,15 +66,12 @@ mudroom_lights:
     - { mode: "Evening", light: 100 }
     - { mode: "Night", light: 100 }
     - { mode: "Night Quiet", light: 100 }
-
   # You can specify a light group or list of lights here
   lights:
     - switch.mudroom_lights
-
   # You can specify a list of motion sensors here
   motion:
     - binary_sensor.mudroom_motion
-
 kitchen_lights:
   module: automotionlight
   class: AutoMotionLight
@@ -97,16 +91,13 @@ kitchen_lights:
     - { mode: Evening, light: "scene.bright_kitchen" }
     - { mode: Night, light: "scene.dim_kitchen" }
     - { mode: Night Quiet, light: "scene.dim_kitchen" }
-
   # You can specify a light group or list of lights here
   lights:
     - switch.kitchen_island_lights
     - switch.kitchen_lights
-
   # You can specify a list of motion sensors here
   motion:
     - binary_sensor.kitchen_occupancy
-
 downstairs_bathroom_lights:
   module: automotionlight
   class: AutoMotionLight
@@ -125,18 +116,14 @@ downstairs_bathroom_lights:
     - { mode: Evening, light: 100 }
     - { mode: Night, light: 100 }
     - { mode: Night Quiet, light: 100 }
-
   illuminance: sensor.downstairs_bathroom_illuminance
   illuminance_threshold: 100
-
   # You can specify a light group or list of lights here
   lights:
     - switch.downstairs_bathroom_light
-
   # You can specify a list of motion sensors here
   motion:
     - binary_sensor.downstairs_bathroom_motion
-
 kids_bathroom_lights:
   module: automotionlight
   class: AutoMotionLight
@@ -155,19 +142,15 @@ kids_bathroom_lights:
     - { mode: Evening, light: 50, delay: 240 }
     - { mode: Night, light: 15, delay: 60 }
     - { mode: Night Quiet, light: 8, delay: 30 }
-
   humidity:
     - sensor.kid_bathroom_humidity
   humidity_threshold: 60
-
   # You can specify a light group or list of lights here
   lights:
     - light.kids_bathroom_vanity_lights
-
   # You can specify a list of motion sensors here
   motion:
     - binary_sensor.kid_bathroom_motion
-
 master_toilet_lights:
   module: automotionlight
   class: AutoMotionLight
@@ -186,15 +169,12 @@ master_toilet_lights:
     - { mode: Evening, light: 50, delay: 240 }
     - { mode: Night, light: 25, delay: 60 }
     - { mode: Night Quiet, light: 15, delay: 30 }
-
   # You can specify a light group or list of lights here
   lights:
     - light.master_bathroom_toilet_light
-
   # You can specify a list of motion sensors here
   motion:
     - binary_sensor.master_bathroom_toilet_motion
-
 victorias_closet_lights:
   module: automotionlight
   class: AutoMotionLight
@@ -213,15 +193,12 @@ victorias_closet_lights:
     - { mode: "Evening", light: 100 }
     - { mode: "Night", light: 100 }
     - { mode: "Night Quiet", light: 100 }
-
   # You can specify a light group or list of lights here
   lights:
     - switch.victorias_closet_lights
-
   # You can specify a list of motion sensors here
   motion:
     - binary_sensor.victoria_closet_motion
-
 master_bathroom_lights:
   module: automotionlight
   class: AutoMotionLight
@@ -240,16 +217,13 @@ master_bathroom_lights:
     - { mode: Evening, light: 50 }
     - { mode: Night, light: 25 }
     - { mode: Night Quiet, light: 15 }
-
   # You can specify a light group or list of lights here
   lights:
     - light.master_bathroom_vanity_lights
-
   # You can specify a list of motion sensors here
   motion:
     - binary_sensor.master_bathroom_toilet_motion
     - binary_sensor.master_bathroom_occupancy
-
 allowance:
   module: allowance
   class: Allowance
@@ -260,21 +234,18 @@ allowance:
     - switch.master_bathroom_toilet_fan
     - switch.kid_bathroom_exhaust_fan
     - switch.server_room_utility_lights
-
 outside_lights:
   module: outside_lights
   class: OutsideLights
   lights:
     - switch.exterior_lamp_post
     - switch.garage_outside_lights
-
 pantry_light:
   module: door_light
   class: DoorLight
   door: binary_sensor.pantry_door
   lights:
     - switch.pantry_main_lights
-
 server_light:
   module: door_light
   class: DoorLight
