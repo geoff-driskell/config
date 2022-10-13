@@ -252,3 +252,15 @@ server_light:
   door: binary_sensor.server_room_door
   lights:
     - switch.server_room_main_lights
+master_vent_fan:
+  module: bathroom_vent_fan
+  class: BathroomVentFan
+  fan: switch.master_bathroom_shower_fan
+  humidity_sensor: sensor.master_bathroom_humidity
+  max_humidity: 68
+kids_vent_fan:
+  module: bathroom_vent_fan
+  class: BathroomVentFan
+  fan: switch.kid_bathroom_exhaust_fan
+  humidity_sensor: sensor.kid_bathroom_humidity
+  max_humidity: 68
