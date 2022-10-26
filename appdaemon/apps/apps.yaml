@@ -7,6 +7,7 @@ twins_sleep:
 shower_light:
   module: shower_light
   class: ShowerLight
+  log: lights_log
 master_bedtime:
   module: bedtime
   class: Bedtime
@@ -243,30 +244,35 @@ allowance:
 outside_lights:
   module: outside_lights
   class: OutsideLights
+  log: lights_log
   lights:
     - switch.exterior_lamp_post
     - switch.garage_outside_lights
 pantry_light:
   module: door_light
   class: DoorLight
+  log: lights_log
   door: binary_sensor.pantry_door
   lights:
     - switch.pantry_main_lights
 server_light:
   module: door_light
   class: DoorLight
+  log: lights_log
   door: binary_sensor.server_room_door
   lights:
     - switch.server_room_main_lights
 master_vent_fan:
   module: bathroom_vent_fan
   class: BathroomVentFan
+  log: fan_log
   fan: switch.master_bathroom_shower_fan
   humidity_sensor: sensor.master_bathroom_humidity
   max_humidity: 68
 kids_vent_fan:
   module: bathroom_vent_fan
   class: BathroomVentFan
+  log: fan_log
   fan: switch.kid_bathroom_exhaust_fan
   humidity_sensor: sensor.kid_bathroom_humidity
   max_humidity: 68

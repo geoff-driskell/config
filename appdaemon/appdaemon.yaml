@@ -31,3 +31,18 @@ logs:
   lights_log:
     name: Lights
     filename: /config/appdaemon/logs/lights.log
+  sun_log:
+    name: Sun
+    filename: /config/appdaemon/logs/sun.log
+  master_bed_log:
+    name: MasterBed
+    filename: /config/appdaemon/logs/master_bed.log
+  presence_log:
+    name: Presence
+    filename: /config/appdaemon/logs/presence.log
+  security_log:
+    name: Security
+    filename: /config/appdaemon/logs/security.py
+  fan_log:
+    name: Fan
+    filename: /config/appdaemon/logs/fan.log
