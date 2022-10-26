@@ -308,7 +308,38 @@ home_away:
     - light.nursery_ceiling_fan_light
   motion_blocker: input_boolean.enable_motion_detection
   constraint_input_boolean: input_boolean.guest_mode,off
+Security:
+  class: Secure
+  module: secure
+  log: security_log
+  dependencies: kitchen_sound
+  announcement_volume: 0.5
+  initial_message: ["working", "ok, checking", "give me a sec"]
+  secure_message: ["The house is now secure", "All good", "Yup, secure"]
+  not_secure_message: "The house is not secure"
+  insecure_message: "The following items are insecure :"
+  securing_message: "I have secured the following items: "
+  failed_message: "The following items failed to secure: "
+  query_zones:  ["Garage Perimeter", "Downstairs Perimeter"]
+  zones:
+    Downstairs Perimeter:
+      lock.assure_touchscreen_deadbolt:
+        desired_state: "locked"
+        service: lock/lock
+        timeout: 5
+        no_pending_check: 1
+      binary_sensor.back_door:
+        desired_state: "off"
 
+    Garage Perimeter:
+      cover.main_garage_door:
+        desired_state: "closed"
+        service: cover/close_cover
+        timeout: 20
+      cover.workshop_garage_door:
+        desired_state: "closed"
+        service: cover/close_cover
+        timeout: 20
 auto_fan_speed_master:
   module: auto_fan_speed
   class: AutoFanSpeed
