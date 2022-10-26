@@ -276,6 +276,38 @@ kids_vent_fan:
   fan: switch.kid_bathroom_exhaust_fan
   humidity_sensor: sensor.kid_bathroom_humidity
   max_humidity: 68
+home_away:
+  module: home_away
+  class: HomeAway
+  log: presence_log
+  trackers: 
+    - person.geoff
+    - person.victoria
+  lights:
+    - switch.garage_lights
+    - switch.averys_bedroom_lamp
+    - switch.attic_main_lights
+    - switch.backyard_flood_light
+    - switch.deck_deck_fan
+    - switch.deck_fan_light
+    - switch.dining_room_chandelier
+    - switch.dining_room_lights
+    - switch.downstairs_bathroom_fan
+    - switch.front_porch_light
+    - switch.geoffs_closet_main_lights
+    - switch.loft_lamp
+    - switch.loft_lights
+    - switch.master_bedroom_lamps
+    - switch.office_lamp
+    - switch.office_light
+    - switch.stairs_lights
+    - light.averys_bedroom_ceiling_fan_light
+    - light.guest_room_light
+    - light.living_room_light
+    - light.master_bedroom_light
+    - light.nursery_ceiling_fan_light
+  motion_blocker: input_boolean.enable_motion_detection
+  constraint_input_boolean: input_boolean.guest_mode,off
 
 auto_fan_speed_master:
   module: auto_fan_speed
