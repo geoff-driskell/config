@@ -269,3 +269,11 @@ kids_vent_fan:
   fan: switch.kid_bathroom_exhaust_fan
   humidity_sensor: sensor.kid_bathroom_humidity
   max_humidity: 68
+
+auto_fan_speed_master:
+  module: auto_fan_speed
+  class: AutoFanSpeed
+  log: fan_log
+  temp_sensor: sensor.master_bedroom_temperature
+  thermostat: climate.master_bedroom
+  fan: fan.master_bedroom_fan
