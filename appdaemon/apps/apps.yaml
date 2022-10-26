@@ -284,3 +284,14 @@ auto_fan_speed_master:
   temp_sensor: sensor.master_bedroom_temperature
   thermostat: climate.master_bedroom
   fan: fan.master_bedroom_fan
+sun:
+  module: sun
+  class: Sun
+  log: sun_log
+homekit_tracker:
+  module: homekit_trackers
+  class: HomeKitTracker
+  trackers:
+    - input_boolean.geoff_home
+    - input_boolean.victoria_home
+    - input_boolean.guest_mode

@@ -8,6 +8,10 @@ appdaemon:
   plugins:
     HASS:
       type: hass
+  namespaces:
+    sun:
+      # writeback is safe, performance or hybrid
+      writeback: safe
 http:
   url: http://127.0.0.1:5050
 admin:
