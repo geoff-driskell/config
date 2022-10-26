@@ -295,3 +295,10 @@ homekit_tracker:
     - input_boolean.geoff_home
     - input_boolean.victoria_home
     - input_boolean.guest_mode
+# door_notification:
+#   module: door_notification
+#   class: DoorNotification
+#   doors:
+#     - binary_sensor.back_door
+#     - binary_sensor.front_door
+#     - binary_sensor.mudroom_door
