@@ -4,8 +4,8 @@ from enum import Enum
 from typing import Any
 import appdaemon.plugins.hass.hassapi as hass
 
-TV_ACTIVE_STATES: list[str] = ["Idle", "Paused", "Playing"]
-TV_INACTIVE_STATES: list[str] = ["Standby", "Off", "Unavailable", "Unknown"]
+TV_ACTIVE_STATES: list[str] = ["idle", "paused", "playing"]
+TV_INACTIVE_STATES: list[str] = ["standby", "off", "unavailable", "unknown"]
 DEFAULT_DELAY: int = 600
 
 TV_ENTITY = "media_player.master_bedroom"
@@ -42,10 +42,16 @@ class Bedtime(hass.Hass):
                           constrain_input_select="input_select.house_mode,Night,Night Quiet")
         self.run_daily(self.reset_room_state, "09:00:00")
 
+    def lamp_off(self, kwargs):
+        """Turn off the lamp."""
+        self.log("Turning off the light, night night!")
+        self.turn_off("switch.master_bedroom_lamps")
+
     def refresh_tv_timer(self):
         """Extend the TV timer if it is running."""
         # pylint: disable=attribute-defined-outside-init
         if self.timer_running(self.tv_check_handle):
+            self.log("The TV time was running. We are going to reset it.")
             self.cancel_timer(self.tv_check_handle)
             self.tv_check_handle = self.run_in(self.final_bed_check, self.tv_delay)
 
@@ -53,9 +59,10 @@ class Bedtime(hass.Hass):
         """Extend the lamp timer if it is running."""
         # pylint: disable=attribute-defined-outside-init
         if self.timer_running(self.lamp_timer_handle):
+            self.log("The lamp timer was running. We are going to reset it.")
             self.cancel_timer(self.lamp_timer_handle)
             self.lamp_timer_handle = self.run_in(
-                self.turn_off("switch.master_bedroom_lamps"), self.delay
+                self.lamp_off, self.delay
             )
 
     def entered_bathroom(self, entity, attribute, old, new, kwargs):
@@ -85,13 +92,14 @@ class Bedtime(hass.Hass):
         elif self.current_state == RoomStates.BED:
             # Someone needs to potty don't change the room
             self.log("Someone is stirring. Resetting the lamp off timer if it's still on.")
+            self.log(self.lamp_timer_handle)
             self.refresh_lamp_timer()
-            return
         elif self.current_state == RoomStates.MAYBE_BED:
             # False Alarm, not bedtime yet
             self.log("I guess we weren't quite ready for bed.")
             self.log("Setting the room state back to BATHROOM.")
             self.current_state = RoomStates.BATHROOM
+            self.log(self.tv_check_handle)
             self.refresh_tv_timer()
         else:
             self.log(f"Someone went into the bathroom and the room state was {self.current_state}.")
@@ -101,21 +109,22 @@ class Bedtime(hass.Hass):
         """Determine if the tv is on."""
         # pylint: disable=attribute-defined-outside-init
         self.log("Checking to see if the tv is playing.")
+        self.log(self.get_state("media_player.master_bedroom"))
         return bool(
             any(
                 self.get_state("media_player.master_bedroom") == state for state in TV_ACTIVE_STATES
             )
         )
 
-    def down_for_the_night(self):
+    def down_for_the_night(self, kwargs):
         """Turn off the lamp."""
         # pylint: disable=attribute-defined-outside-init
         self.log("Occupants are down for the night.")
         self.log("Starting the lamp timer.")
         self.log(f"The lamp will turn off in {self.delay} seconds.")
-        self.run_in(self.turn_off("switch.master_bedroom_lamps"), self.delay)
+        self.run_in(self.lamp_off, self.delay)
 
-    def reset_room_state(self):
+    def reset_room_state(self, kwargs):
         """Reset the room to empty state."""
         # pylint: disable=attribute-defined-outside-init
         self.log("Reset room state called.")
@@ -128,7 +137,7 @@ class Bedtime(hass.Hass):
         self.log("Resetting the room back to empty.")
         self.current_state = RoomStates.EMPTY
 
-    def final_bed_check(self, entity, attribute, old, new, kwargs):
+    def final_bed_check(self, kwargs):
         """Check one last time to see if this is down for the night."""
         # pylint: disable=attribute-defined-outside-init
         if self.tv_is_on():
@@ -136,11 +145,11 @@ class Bedtime(hass.Hass):
             self.log("Setting the room state to BED.")
             self.current_state = RoomStates.BED
             self.log("We are down for the night.")
-            self.down_for_the_night()
+            self.down_for_the_night(kwargs)
         else:
             self.log("False alarm, we aren't going to bed now.")
             self.log("Resetting room to empty.")
-            self.reset_room_state()
+            self.reset_room_state(kwargs)
 
     def left_bathroom(self, entity, attribute, old, new, kwargs):
         """Handle people in bed."""
@@ -152,7 +161,7 @@ class Bedtime(hass.Hass):
                 self.log("The TV is on. I am going to assume we are down for the night.")
                 self.log("Setting the room state to BED.")
                 self.current_state = RoomStates.BED
-                self.down_for_the_night()
+                self.down_for_the_night(kwargs)
             else:
                 self.log("The TV was not on.")
                 self.log(f"I am going to check one more time in {self.tv_delay} seconds.")
@@ -160,4 +169,3 @@ class Bedtime(hass.Hass):
                     self.final_bed_check, self.tv_delay)
         if self.current_state == RoomStates.BED:
             self.log("The one stirring is back in bed.")
-            return

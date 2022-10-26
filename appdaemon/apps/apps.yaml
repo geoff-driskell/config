@@ -10,6 +10,7 @@ shower_light:
 master_bedtime:
   module: bedtime
   class: Bedtime
+  log: master_bed_log
   delay: 600
   tv_delay: 300
 modes:
