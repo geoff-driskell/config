@@ -29,6 +29,7 @@ class Naptime(hass.Hass):
         self.benjamin_asleep.listen_state(self.benjamin_awake, new = "off")
 
     def naptime_started(self, entity, attribute, old, new, kwargs):
+        """Start the twins naptime routine."""
         self.log("The twins bedtime automation started.", level = "INFO")
         self.turn_on("input_boolean.twins_asleep")
         # Record Benjamin is napping
@@ -63,12 +64,11 @@ class Naptime(hass.Hass):
         
     
     def avery_awake(self, entity, attribute, old, new, kwargs):
-        #TODO: Calculate the time that Avery slept
-
+        """Handle Avery waking up."""
         # Log Avery is awake
         if self.now_is_between("00:00:00", "10:00:00"):
             self.log("Avery woke up from bedtime.", level="INFO")
-            if self.benjamin_asleep.is_state("on"):
+            if self.get_state("input_boolean.benjamin_naptime") == "on":
                 self.log("Benjamin is still asleep, when he wakes up we will turn off the bedtime helper.", level="INFO")
             else:
                 self.log("Benjamin is already awake. Turning off the bedtime helper.", level="INFO")
@@ -76,7 +76,7 @@ class Naptime(hass.Hass):
                 self.turn_off("input_boolean.twins_asleep")
         else:
             self.log("Avery woke up from her nap.", level="INFO")
-            if self.benjamin_asleep.is_state("on"):
+            if self.get_state("input_boolean.benjamin_naptime") == "on":
                 self.log("Benjamin is still asleep, when he wakes up we will turn off the naptime helper.", level="INFO")
             else:
                 self.log("Benjamin is already awake. Turning off the naptime helper.", level="INFO")
@@ -94,12 +94,11 @@ class Naptime(hass.Hass):
             self.turn_on("light.averys_bedroom_ceiling_fan_light", brightness_pct = "15")
 
     def benjamin_awake(self, entity, attribute, old, new, kwargs):
-        #TODO: Calculate the time that Benjamin slept
-        
+        """Handle Benjamin waking up."""
         # Log Benjamin is awake
         if self.now_is_between("00:00:00", "10:00:00"):
             self.log("Benjamin woke up from bedtime.", level="INFO")
-            if self.avery_asleep.is_state("on"):
+            if self.get_state("input_boolean.avery_naptime") == "on":
                 self.log("Avery is still asleep, when she wakes up we will turn off the bedtime helper.", level="INFO")
             else:
                 self.log("Avery is already awake. Turning off the bedtime helper.", level="INFO")
@@ -107,7 +106,7 @@ class Naptime(hass.Hass):
                 self.turn_off("input_boolean.twins_asleep")
         else:
             self.log("Benjamin woke up from his nap.", level="INFO")
-            if self.avery_asleep.is_state("on"):
+            if self.get_state("input_boolean.avery_naptime") == "on":
                 self.log("Avery is still asleep, when she wakes up we will turn off the naptime helper.", level="INFO")
             else:
                 self.log("Avery is already awake. Turning off the naptime helper.", level="INFO")
@@ -126,16 +125,3 @@ class Naptime(hass.Hass):
         else:
             self.log("Turning benjamin's light on.")
             self.turn_on("light.nursery_ceiling_fan_light", brightness_pct = "15")
-    
-    def avery_notifier(self, kwargs):
-        title = "Avery Naptime"
-        message = "Avery has been asleep for {0} Hours {1} Minutes {2} Seconds. She may need to be woken up.".format(self.max_nap_string[0], self.max_nap_string[1], self.max_nap_string[2])
-        self.notifier(title, message)
-
-    def benjamin_notifier(self, kwargs):
-        title = "Benjamin Naptime"
-        message = "Benjamin has been asleep for {0} Hours {1} Minutes {2} Seconds. He may need to be woken up.".format(self.max_nap_string[0], self.max_nap_string[1], self.max_nap_string[2])
-        self.notifier(title, message)
-
-    def notifier(self, title, message):
-        self.call_service('notify/notify', title=title, message=message)
