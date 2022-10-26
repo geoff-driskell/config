@@ -66,6 +66,9 @@
       - thu
       before: 00:00:00
       after: 00:00:00
+    - condition: numeric_state
+      entity_id: sensor.tesla_est_battery_range_mi
+      below: 198.6
   action:
   - service: script.sonos_say
     data_template:
