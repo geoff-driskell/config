@@ -7,9 +7,11 @@ twins_sleep:
 shower_light:
   module: shower_light
   class: ShowerLight
+  log: lights_log
 master_bedtime:
   module: bedtime
   class: Bedtime
+  log: master_bed_log
   delay: 600
   tv_delay: 300
 modes:
@@ -242,30 +244,124 @@ allowance:
 outside_lights:
   module: outside_lights
   class: OutsideLights
+  log: lights_log
   lights:
     - switch.exterior_lamp_post
     - switch.garage_outside_lights
 pantry_light:
   module: door_light
   class: DoorLight
+  log: lights_log
   door: binary_sensor.pantry_door
   lights:
     - switch.pantry_main_lights
 server_light:
   module: door_light
   class: DoorLight
+  log: lights_log
   door: binary_sensor.server_room_door
   lights:
     - switch.server_room_main_lights
 master_vent_fan:
   module: bathroom_vent_fan
   class: BathroomVentFan
+  log: fan_log
   fan: switch.master_bathroom_shower_fan
   humidity_sensor: sensor.master_bathroom_humidity
   max_humidity: 68
 kids_vent_fan:
   module: bathroom_vent_fan
   class: BathroomVentFan
+  log: fan_log
   fan: switch.kid_bathroom_exhaust_fan
   humidity_sensor: sensor.kid_bathroom_humidity
   max_humidity: 68
+home_away:
+  module: home_away
+  class: HomeAway
+  log: presence_log
+  trackers: 
+    - person.geoff
+    - person.victoria
+  lights:
+    - switch.garage_lights
+    - switch.averys_bedroom_lamp
+    - switch.attic_main_lights
+    - switch.backyard_flood_light
+    - switch.deck_deck_fan
+    - switch.deck_fan_light
+    - switch.dining_room_chandelier
+    - switch.dining_room_lights
+    - switch.downstairs_bathroom_fan
+    - switch.front_porch_light
+    - switch.geoffs_closet_main_lights
+    - switch.loft_lamp
+    - switch.loft_lights
+    - switch.master_bedroom_lamps
+    - switch.office_lamp
+    - switch.office_light
+    - switch.stairs_lights
+    - light.averys_bedroom_ceiling_fan_light
+    - light.guest_room_light
+    - light.living_room_light
+    - light.master_bedroom_light
+    - light.nursery_ceiling_fan_light
+  motion_blocker: input_boolean.enable_motion_detection
+  constraint_input_boolean: input_boolean.guest_mode,off
+Security:
+  class: Secure
+  module: secure
+  log: security_log
+  dependencies: kitchen_sound
+  announcement_volume: 0.5
+  initial_message: ["working", "ok, checking", "give me a sec"]
+  secure_message: ["The house is now secure", "All good", "Yup, secure"]
+  not_secure_message: "The house is not secure"
+  insecure_message: "The following items are insecure :"
+  securing_message: "I have secured the following items: "
+  failed_message: "The following items failed to secure: "
+  query_zones:  ["Garage Perimeter", "Downstairs Perimeter"]
+  zones:
+    Downstairs Perimeter:
+      lock.assure_touchscreen_deadbolt:
+        desired_state: "locked"
+        service: lock/lock
+        timeout: 5
+        no_pending_check: 1
+      binary_sensor.back_door:
+        desired_state: "off"
+
+    Garage Perimeter:
+      cover.main_garage_door:
+        desired_state: "closed"
+        service: cover/close_cover
+        timeout: 20
+      cover.workshop_garage_door:
+        desired_state: "closed"
+        service: cover/close_cover
+        timeout: 20
+auto_fan_speed_master:
+  module: auto_fan_speed
+  class: AutoFanSpeed
+  log: fan_log
+  temp_sensor: sensor.master_bedroom_temperature
+  thermostat: climate.master_bedroom
+  fan: fan.master_bedroom_fan
+sun:
+  module: sun
+  class: Sun
+  log: sun_log
+homekit_tracker:
+  module: homekit_trackers
+  class: HomeKitTracker
+  trackers:
+    - input_boolean.geoff_home
+    - input_boolean.victoria_home
+    - input_boolean.guest_mode
+# door_notification:
+#   module: door_notification
+#   class: DoorNotification
+#   doors:
+#     - binary_sensor.back_door
+#     - binary_sensor.front_door
+#     - binary_sensor.mudroom_door

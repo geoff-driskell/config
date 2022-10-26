@@ -5,13 +5,6 @@ master_bath_occupancy:
     - binary_sensor.master_bathroom_toilet_motion
     - binary_sensor.victoria_closet_motion
 
-all_devices:
-  name: All Devices
-  entities:
-    - binary_sensor.geoff_tracker
-    - binary_sensor.victoria_tracker
-    - binary_sensor.guest_tracker
-
 sleep_tracker:
   name: Sleeping
   entities:

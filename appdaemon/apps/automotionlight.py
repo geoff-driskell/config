@@ -18,7 +18,7 @@ from typing import Any
 
 # pylint: disable=import-error
 import appdaemon.plugins.hass.hassapi as hass
-from appdaemon.appdaemon import AppDaemon
+from appdaemon import adapi
 
 __version__ = "0.0.1"
 
@@ -62,9 +62,8 @@ class Room:
     def __init__(
         self,
         name: str,
-        room_lights: set[str] = None,
-        motion: set[str] = None,
-        appdaemon: AppDaemon = None
+        room_lights: set[str] = set(),
+        motion: set[str] = set()
     ) -> None:
 
         # Store the room name
@@ -77,8 +76,6 @@ class Room:
         self.handles: dict[str, str] = {}
 
         self.handles_automotionlight: set[str] = set()
-
-        self._ad = appdaemon
 
     @property
     def lights_dimmable(self) -> list[str]:
@@ -257,7 +254,6 @@ class AutoMotionLight(hass.Hass):
             name=self.room_name,
             room_lights=self.lights,
             motion=self.sensors[EntityType.MOTION.idx],
-            appdaemon=self.get_ad_api(),
         )
 
         # requirements check

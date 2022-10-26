@@ -1,7 +1,4 @@
-import hassapi as hass
-import datetime
-import appdaemon
-
+import appdaemon.plugins.hass.hassapi as hass
 #
 # App to manage house modes
 #

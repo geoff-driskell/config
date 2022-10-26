@@ -35,6 +35,7 @@ proximity:
     tolerance: 15
     unit_of_measurement: mi
 
+circadian_lighting:
 mqtt:
   sensor: !include mqtt_sensor.yaml
   binary_sensor: !include mqtt_binary_sensor.yaml
