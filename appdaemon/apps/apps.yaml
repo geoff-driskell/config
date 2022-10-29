@@ -308,6 +308,10 @@ home_away:
     - light.nursery_ceiling_fan_light
   motion_blocker: input_boolean.enable_motion_detection
   constraint_input_boolean: input_boolean.guest_mode,off
+  thermostats:
+    - climate.downstairs
+    - climate.master_bedroom
+  away_offset: 5
 Security:
   class: Secure
   module: secure
