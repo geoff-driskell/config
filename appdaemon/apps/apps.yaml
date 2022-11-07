@@ -283,6 +283,7 @@ home_away:
   trackers: 
     - person.geoff
     - person.victoria
+    - person.house_guests
   lights:
     - switch.garage_lights
     - switch.averys_bedroom_lamp
@@ -351,10 +352,6 @@ auto_fan_speed_master:
   temp_sensor: sensor.master_bedroom_temperature
   thermostat: climate.master_bedroom
   fan: fan.master_bedroom_fan
-sun:
-  module: sun
-  class: Sun
-  log: sun_log
 homekit_tracker:
   module: homekit_trackers
   class: HomeKitTracker
@@ -369,3 +366,6 @@ homekit_tracker:
 #     - binary_sensor.back_door
 #     - binary_sensor.front_door
 #     - binary_sensor.mudroom_door
+test:
+  module: home_away2
+  class: App

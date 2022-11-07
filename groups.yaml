@@ -17,3 +17,10 @@ parents_sleeping:
   entities:
     - input_boolean.geoff_sleeping
     - input_boolean.victoria_sleeping
+
+house_occupied:
+  name: House Occupied
+  entities:
+    - input_boolean.geoff_home
+    - input_boolean.victoria_home
+    - input_boolean.guest_mode

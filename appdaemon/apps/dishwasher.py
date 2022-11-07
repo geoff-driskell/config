@@ -2,7 +2,7 @@ from platform import machine
 import appdaemon.plugins.hass.hassapi as hass
 from enum import Enum
 
-from libs.machine import Machine, ANY, StateIs, Timeout
+from libs.machine.machine import Machine, ANY, StateIs, Timeout
 
 class States(Enum):
     IDLE = 1

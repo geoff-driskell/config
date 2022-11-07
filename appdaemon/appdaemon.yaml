@@ -12,6 +12,8 @@ appdaemon:
     sun:
       # writeback is safe, performance or hybrid
       writeback: safe
+    presence:
+      writeback: safe
 http:
   url: http://127.0.0.1:5050
 admin:

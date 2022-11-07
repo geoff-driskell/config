@@ -2,8 +2,92 @@
 Handle home and away at Geoff and Victoria's house
 """
 from typing import Any
+from enum import Enum
+from dataclasses import dataclass, field
 import appdaemon.plugins.hass.hassapi as hass
 
+class HVACMode(Enum):
+    """HVAC mode for climate devices."""
+
+    # All activity disabled / Device is off/standby
+    OFF = "off"
+
+    # Heating
+    HEAT = "heat"
+
+    # Cooling
+    COOL = "cool"
+
+    # The device supports heating and cooling to a range
+    HEAT_COOL = "heat_cool"
+
+    @staticmethod
+    def from_string(label):
+        """Set the enum using a string."""
+        if not isinstance(label, str):
+            raise TypeError("Argument label needs to be a string.")
+        for item in HVACMode:
+            if label.lower() == item.value:
+                return item
+        raise ValueError(f"Argument label '{label}' is not a valid state.")
+
+@dataclass()
+class Thermostat(hass.Hass):
+    entity_id: str
+    away_offset: int
+    _current_mode: str = field(init=False)
+    _temperature: int | None = field(init=False)
+    _target_temp_high: int | None = field(init=False)
+    _target_temp_low: int | None = field(init=False)
+    _prev_mode: str = field(init=False)
+    _prev_temperature: int | None = field(init=False)
+    _prev_target_temp_high: int | None = field(init=False)
+    _prev_target_temp_low: int | None = field(init=False)
+    _home_temperature: int | None = field(init=False)
+    _home_target_temp_high: int | None = field(init=False)
+    _home_target_temp_low: int | None = field(init=False)
+    _away_temperature: int | None = field(init=False)
+    _away_target_temp_high: int | None = field(init=False)
+    _away_target_temp_low: int | None = field(init=False)
+
+    def __post__init__(self) -> None:
+        thermostat = self.get_entity(entity=self.entity_id)
+        self._current_mode = thermostat.get_state()
+        self._temperature = thermostat.get_state(attribute="temperature")
+        self._target_temp_high = thermostat.get_state(attribute="target_temp_high")
+        self._target_temp_low = thermostat.get_state(attribute="target_temp_low")
+        self._home_temperature = self._temperature
+        self._home_target_temp_low = self._target_temp_low
+        self._home_target_temp_high = self._target_temp_high
+        if self._current_mode == "cool":
+            self._away_temperature = self._temperature + self.away_offset
+
+
+
+    def set_thermostat_home(self):
+        """Change the thermostat to home settings"""
+
+        if self._prev_mode == "heat_cool":
+            self.log(f"Restoring {self.entity_id} to heat/cool mode.")
+            self.log(
+                f"Restoring {self.entity_id} target high temperature to {self._home_target_temp_high}."
+            )
+            self.log(
+                f"Restoring {self.entity_id} target low temperature to {self._home_target_temp_low}."
+            )
+            self.call_service(
+                "climate/set_temperature",
+                entity_id=self.entity_id,
+                target_temp_high=self._home_target_temp_high,
+                target_temp_low=self._home_target_temp_low,
+            )
+        elif self._prev_mode == "heat" or self._prev_mode == "cool":
+            self.log(f"Restoring {self.entity_id} to {self._prev_mode} mode.")
+            self.call_service(
+                "climate/set_temperature",
+                entity_id=self.entity_id,
+                temperature=self._home_temperature,
+            )
 
 class HomeAway(hass.Hass):
     """Class to handle home and away."""
@@ -16,16 +100,24 @@ class HomeAway(hass.Hass):
         self.away = False
 
         self.home_state: str = self.args.get("home_state", "home")
+        self.log(f"Configured home state is {self.home_state}.")
         self.away_state: str = self.args.get("away_state", "away")
+        self.log(f"Configured away state is {self.away_state}.")
         self.motion_blocker: str = self.args.get(
             "motion_blocker", "input_boolean.dummy"
         )
+        self.log(f"Configured motion blocker is {self.motion_blocker}.")
 
         # Initialize Thermostat settings
+        self.prev_thermostat_settings: dict[str, dict[str, Any]] = {}
         self.thermostats: set[str] = self.args.get("thermostats", "climate.dummy")
-        self.away_offset: int = self.args.get("away_offset", 0)
-        self.prev_thermostat_settings: dict[str, dict[str, Any]]
+        for thermostat in self.thermostats:
+            current_settings = self.get_thermostat_state(thermostat_entity=thermostat)
+            self.log(f"Thermostat: {thermostat}. Current state is {current_settings['state']}.")
+            self.prev_thermostat_settings[thermostat] = current_settings
 
+        self.away_offset: int = self.args.get("away_offset", 0)
+        self.log(f"Configured away offset is {self.away_offset}.")
         # Map tracker name to state.
         self.trackers: dict[str, Any] = {}
         for name in self.args["trackers"]:
@@ -180,13 +272,13 @@ class HomeAway(hass.Hass):
         """Change the thermostat to home settings"""
         prev_state = self.prev_thermostat_settings.get(thermostat_entity).get("state")
         prev_temperature = self.prev_thermostat_settings.get(thermostat_entity).get(
-            "state"
+            "temperature"
         )
         prev_target_temp_high = self.prev_thermostat_settings.get(
             thermostat_entity
-        ).get("state")
+        ).get("target_temp_high")
         prev_target_temp_low = self.prev_thermostat_settings.get(thermostat_entity).get(
-            "state"
+            "target_temp_low"
         )
 
         if prev_state == "heat_cool":
@@ -217,4 +309,3 @@ class HomeAway(hass.Hass):
                 entity_id=thermostat_entity,
                 temperature=prev_temperature,
             )
-

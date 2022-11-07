@@ -11,6 +11,7 @@ class DoorLight(hass.Hass):
         # pylint: disable=attribute-defined-outside-init
         # get a real dict for the configuration
         self.args: dict[str, Any] = dict(self.args)
+        self.log(self.args)
 
         self.door: str = self.args.get("door", None)
         # define light entities switched by automotionlight
