@@ -41,6 +41,26 @@ mqtt:
   sensor: !include mqtt_sensor.yaml
   binary_sensor: !include mqtt_binary_sensor.yaml
 
+utility_meter:
+  avery_daily_sleep:
+    source: sensor.avery_sleep
+    name: Avery Daily Sleep
+    cycle: daily
+    offset:
+      hours: 9
+    tariffs:
+      - nap
+      - bed
+  benjamin_daily_sleep:
+    source: sensor.benjamin_sleep
+    name: Benjamin Daily Sleep
+    cycle: daily
+    offset:
+      hours: 9
+    tariffs:
+      - nap
+      - bed
+
 template:
   - sensor:
     - name: Dishwasher
