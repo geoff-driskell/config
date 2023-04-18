@@ -36,6 +36,9 @@
     condition: state
     entity_id: device_tracker.tesla_location
     state: home
+  - condition: state
+    entity_id: input_boolean.on_leave_or_teleworking
+    state: 'off'
   action:
   - service: script.sonos_say
     data_template:
