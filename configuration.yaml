@@ -5,6 +5,7 @@ homeassistant:
   elevation: 170
   unit_system: imperial
   currency: USD
+  country: US
   time_zone: "America/New_York"
   internal_url: "http://192.168.1.10:8123"
   external_url: !secret external_url
