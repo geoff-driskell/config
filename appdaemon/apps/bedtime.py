@@ -77,11 +77,11 @@ class Bedtime(hass.Hass):
             # Record someone in the bathroom
             self.current_state = RoomStates.BATHROOM
             # Turn the lamp on.
-            if self.get_state("switch.master_bedroom_lamps") == "off":
-                self.log("Turning the lamp on.")
-                self.turn_on("switch.master_bedroom_lamps")
-            else:
-                self.log("Lamp is already on.")
+            #if self.get_state("switch.master_bedroom_lamps") == "off":
+            #    self.log("Turning the lamp on.")
+            #    self.turn_on("switch.master_bedroom_lamps")
+            #else:
+            #    self.log("Lamp is already on.")
 
             # Turn the fan on
             if self.get_state("fan.master_bedroom_fan") == "off":
