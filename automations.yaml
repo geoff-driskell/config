@@ -86,3 +86,118 @@
         Tesla is unplugged. I would plug it in for you. But I lack legs. And Arms.'\n
         \   ] | random }}"
   initial_state: true
+- id: '1670369323535'
+  alias: Buffet Christmas lights
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunset
+    offset: 0
+    id: Sunset
+  - platform: time
+    at: '23:00:00'
+    id: Midnight
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Sunset
+      sequence:
+      - type: turn_on
+        device_id: 3fbd83da1a9d47c93117aaf4f18770bf
+        entity_id: switch.lumi_lumi_plug_maus01_switch_2
+        domain: switch
+    - conditions:
+      - condition: trigger
+        id: Midnight
+      sequence:
+      - type: turn_off
+        device_id: 3fbd83da1a9d47c93117aaf4f18770bf
+        entity_id: switch.lumi_lumi_plug_maus01_switch_2
+        domain: switch
+  mode: single
+- id: '1680543685838'
+  alias: Leave/Telework Switch On
+  description: This automation triggers if Geoff is on leave or teleworking to alter
+    other automations.
+  trigger:
+  - platform: time
+    at: 03:00:00
+  condition:
+  - condition: state
+    entity_id: calendar.geoff_leave_and_telework
+    state: 'on'
+  action:
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.on_leave_or_teleworking
+  mode: single
+- id: '1681312852471'
+  alias: Sleep Type Selector
+  description: ''
+  trigger:
+  - platform: time
+    at: 09:00:00
+    variables:
+      tariff: nap
+  - platform: time
+    at: '17:00:00'
+    variables:
+      tariff: bed
+  condition: []
+  action:
+  - service: select.select_option
+    data:
+      option: '{{ tariff }}'
+    target:
+      entity_id: select.avery_daily_sleep
+  - service: select.select_option
+    data:
+      option: '{{ tariff }}'
+    target:
+      entity_id: select.benjamin_daily_sleep
+  mode: single
+- id: '1681324323411'
+  alias: Leave/Teleworking Reset
+  description: ''
+  trigger:
+  - platform: time
+    at: '23:30:00'
+  condition: []
+  action:
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.on_leave_or_teleworking
+  mode: single
+- id: '1681501102093'
+  alias: New Automation
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition: []
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_2
+    data:
+      media_content_id: media-source://media_source/local/09 - Against The Wind.mp3
+      media_content_type: audio/mpeg
+    metadata:
+      title: 09 - Against The Wind.mp3
+      thumbnail:
+      media_class: music
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://media_source
+  - service: media_player.repeat_set
+    data:
+      repeat: one
+    target:
+      entity_id: media_player.kitchen_2
+  mode: single
