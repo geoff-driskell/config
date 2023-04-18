@@ -102,7 +102,7 @@ class AutoFanSpeed(hass.Hass):
         fan_percentage = 100* ((room_temperature - self.min_temp) / (
             self.max_temp - self.min_temp
         ))
-        if fan_percentage < 25:
-            fan_percentage = 25
+        if fan_percentage < 50:
+            fan_percentage = 50
 
         return int(fan_percentage)
