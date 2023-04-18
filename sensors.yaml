@@ -48,31 +48,145 @@
       value_template: >
         {{ (states('sensor.tesla_elevation') | float * 3.2808 ) | round(2) }}
 
+    lights_on_all:
+      unique_id: 038e10f1-1990-4e0f-b9a1-082fa2fd76d9
+      friendly_name: Lights on (All)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | list | count }}
+
+    lights_on_kitchen:
+      unique_id: bd379b89-a097-47fe-9689-ee8e0756e516
+      friendly_name: Lights on (Kitchen)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Kitchen'])
+          | list | count }}
+
+    lights_on_dining_room:
+      unique_id: d38f6cf2-29eb-4381-bb28-44131c49f5b9
+      friendly_name: Lights on (Dining Room)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Dining Room'])
+          | list | count }}
+
+    lights_on_front_foyer:
+      unique_id: cd809d2a-6a77-4982-9a1c-f76900b4e3ba
+      friendly_name: Lights on (Front Foyer)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Front Foyer'])
+          | list | count }}
+
+    lights_on_office:
+      unique_id: 3e01480c-f251-4792-97e8-69d20d7df064
+      friendly_name: Lights on (Office)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Office'])
+          | list | count }}
+
+    lights_on_garage:
+      unique_id: e45f278f-654e-420a-895b-65de2c7d8801
+      friendly_name: Lights on (Garage)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Garage'])
+          | list | count }}
+
+    lights_on_loft:
+      unique_id: ec47c90e-1b5f-4175-88ab-aa65c6d78bec
+      friendly_name: Lights on (Loft)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Loft'])
+          | list | count }}
+
+    lights_on_guest_room:
+      unique_id: 02645cf9-283a-4532-b52e-d2ef62f04cb5
+      friendly_name: Lights on (Guest Room)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Guest Room'])
+          | list | count }}
+
+    lights_on_bens_room:
+      unique_id: 43a00b96-15a2-4bc5-b027-f1c3477eef24
+      friendly_name: Lights on (Ben's Room)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ["Benjamin’s Room"])
+          | list | count }}
+
+    lights_on_averys_room:
+      unique_id: cd160c2b-8c3b-48da-ae7a-b5e046157e6a
+      friendly_name: Lights on (Avery's Room)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ["Avery’s Room"])
+          | list | count }}
+
+    lights_on_master_bedroom:
+      unique_id: a8f9fe9e-d840-4c1b-b7f8-1696f76224ef
+      friendly_name: Lights on (Master Bedroom)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Master Bedroom'])
+          | list | count }}
+
+    lights_on_master_bathroom:
+      unique_id: 231c10dd-5120-47fd-9758-604ea545cfb7
+      friendly_name: Lights on (Master Bathroom)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Master Bathroom'])
+          | list | count }}
+
+    lights_on_server_room:
+      unique_id: 854cabcc-11c1-4551-a39d-bda8cb467c8f
+      friendly_name: Lights on (Server Room)
+      icon_template: mdi:lightbulb-group
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | map('area_name')
+          | select('in', ['Master Bathroom'])
+          | list | count }}
+
 - platform: history_stats
-  name: Avery Total Naptime Today
+  name: Avery Sleep
   entity_id: input_boolean.avery_naptime
   state: "on"
   type: time
-  start: "{{ now().replace(hour=9, minute=0, second=0) }}"
-  end: "{{ now().replace(hour=17, minute=0, second=0) }}"
+  start: "{{ 0 }}"
+  end: "{{ now() }}"
 - platform: history_stats
-  name: Benjamin Total Naptime Today
+  name: Benjamin Sleep
   entity_id: input_boolean.benjamin_naptime
   state: "on"
   type: time
-  start: "{{ now().replace(hour=9, minute=0, second=0) }}"
-  end: "{{ now().replace(hour=17, minute=0, second=0) }}"
-
-- platform: mqtt_room
-  device_id: "Geoff-iPhone"
-  name: "Geoff's iPhone"
-  state_topic: "espresense/rooms"
-  timeout: 10
-  away_timeout: 10
-
-- platform: mqtt_room
-  device_id: "roomAssistant:a7bfcc9a-9afc-4602-af98-41ed2bcb9150"
-  name: "Victoria BLE"
-  state_topic: "espresense/rooms"
-  timeout: 10
-  away_timeout: 10
+  start: "{{ 0 }}"
+  end: "{{ now() }}"
