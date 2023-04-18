@@ -75,3 +75,6 @@
         {% if is_state('input_boolean.avery_naptime', 'on') or is_state('input_boolean.benjamin_naptime', 'on') %}
           True
         {% endif %}
+
+- platform: workday
+  country: US
