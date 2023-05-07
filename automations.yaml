@@ -201,3 +201,34 @@
     target:
       entity_id: media_player.kitchen_2
   mode: single
+- id: '1682098701688'
+  alias: Reset Nap Switches
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.start_twins_sleeping
+    - input_boolean.wake_up_avery
+    - input_boolean.wake_up_benjamin
+    - input_boolean.wake_up_both_kids
+    to: 'on'
+  condition: []
+  action:
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id:
+      - input_boolean.wake_up_avery
+      - input_boolean.wake_up_benjamin
+      - input_boolean.wake_up_both_kids
+      - input_boolean.start_twins_sleeping
+  mode: single
+- id: '1682131889423'
+  alias: Master Bath Humidity
+  description: ''
+  use_blueprint:
+    path: Blackshome/bathroom-humidity-exhaust-fan.yaml
+    input:
+      trigger: sensor.master_bath_humidity_derivative
+      fan_switch:
+        entity_id: fan.master_bathroom_shower_fan
