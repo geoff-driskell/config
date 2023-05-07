@@ -176,6 +176,24 @@
           | select('in', ['Master Bathroom'])
           | list | count }}
 
+    twins_sleep_state:
+      friendly_name: "Twins Sleep State"
+      unique_id: d0bd55ea-a582-492a-9e93-67b4dfb20233
+      value_template: >-
+        {% if now().hour > 8 and now().hour < 17 %}
+          {% if is_state('input_boolean.avery_naptime', 'on') or is_state('input_boolean.benjamin_naptime', 'on') %}
+            nap
+          {% else %}
+            awake
+          {% endif %}
+        {% else %}
+          {% if is_state('input_boolean.avery_naptime', 'on') or is_state('input_boolean.benjamin_naptime', 'on') %}
+            bed
+          {% else %}
+            awake
+          {% endif %}
+        {% endif %}
+
 - platform: history_stats
   name: Avery Sleep
   entity_id: input_boolean.avery_naptime
