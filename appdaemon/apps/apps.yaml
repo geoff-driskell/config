@@ -1,7 +1,7 @@
-twins_sleep:
-  module: naptime
-  class: Naptime
-  log: twins_log
+# twins_sleep:
+#   module: naptime
+#   class: Naptime
+#   log: twins_log
 shower_light:
   module: shower_light
   class: ShowerLight
@@ -282,13 +282,13 @@ server_light:
   door: binary_sensor.server_room_door
   lights:
     - switch.server_room_main_lights
-master_vent_fan:
-  module: bathroom_vent_fan
-  class: BathroomVentFan
-  log: fan_log
-  fan: switch.master_bathroom_shower_fan
-  humidity_sensor: sensor.master_bathroom_humidity
-  max_humidity: 68
+# master_vent_fan:
+#   module: bathroom_vent_fan
+#   class: BathroomVentFan
+#   log: fan_log
+#   fan: switch.master_bathroom_shower_fan
+#   humidity_sensor: sensor.master_bathroom_humidity
+#   max_humidity: 68
 kids_vent_fan:
   module: bathroom_vent_fan
   class: BathroomVentFan
@@ -347,3 +347,184 @@ homekit_tracker:
     - input_boolean.geoff_home
     - input_boolean.victoria_home
     - input_boolean.guest_mode
+
+twins_sleep:
+  class: Naptime
+  module: twins_sleep
+  nap_zones:
+    ["Avery Room", "Benjamin Room", "HomePods", "Hallway", "Loft", "Stairs"]
+  bed_zones:
+    ["Avery Room", "Benjamin Room", "HomePods", "Hallway", "Loft", "Stairs"]
+  awake_zones: ["Avery Room", "Benjamin Room", "HomePods"]
+  avery_zones: ["Avery Room"]
+  ben_zones: ["Benjamin Room"]
+  sleep_entity: "sensor.twins_sleep_state"
+  zones:
+    HomePods:
+      input_boolean.play_sleep_song:
+        nap:
+          {
+            desired_state: "on",
+            service: "input_boolean/turn_on",
+            parameters: {},
+          }
+        bed:
+          {
+            desired_state: "on",
+            service: "input_boolean/turn_on",
+            parameters: {},
+          }
+        awake:
+          {
+            desired_state: "off",
+            service: "input_boolean/turn_off",
+            parameters: {},
+          }
+      input_boolean.twins_down_for_the_night:
+        nap:
+          {
+            desired_state: "off",
+            service: "input_boolean/turn_off",
+            parameters: {},
+          }
+        bed:
+          {
+            desired_state: "on",
+            service: "input_boolean/turn_on",
+            parameters: {},
+          }
+        awake:
+          {
+            desired_state: "off",
+            service: "input_boolean/turn_off",
+            parameters: {},
+          }
+    Avery Room:
+      input_boolean.avery_naptime:
+        nap:
+          {
+            desired_state: "on",
+            service: "input_boolean/turn_on",
+            parameters: {},
+          }
+        bed:
+          {
+            desired_state: "on",
+            service: "input_boolean/turn_on",
+            parameters: {},
+          }
+        awake:
+          {
+            desired_state: "off",
+            service: "input_boolean/turn_off",
+            parameters: {},
+          }
+      light.averys_bedroom_ceiling_fan_light:
+        nap: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        bed: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        awake:
+          {
+            desired_state: "on",
+            service: "light/turn_on",
+            parameters: { brightness_pct: 15 },
+          }
+      light.averys_room_lamp:
+        nap: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        bed: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        awake:
+          { desired_state: "off", service: "light/turn_off", parameters: {} }
+      light.attic_main_lights:
+        nap: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        bed: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        awake:
+          { desired_state: "off", service: "light/turn_off", parameters: {} }
+      fan.averys_bedroom_ceiling_fan:
+        nap:
+          {
+            desired_state: "on",
+            service: "fan/turn_on",
+            parameters: { percentage: 75 },
+          }
+        bed:
+          {
+            desired_state: "on",
+            service: "fan/turn_on",
+            parameters: { percentage: 75 },
+          }
+        awake: { desired_state: "off", service: "fan/turn_off", parameters: {} }
+    Benjamin Room:
+      input_boolean.benjamin_naptime:
+        nap:
+          {
+            desired_state: "on",
+            service: "input_boolean/turn_on",
+            parameters: {},
+          }
+        bed:
+          {
+            desired_state: "on",
+            service: "input_boolean/turn_on",
+            parameters: {},
+          }
+        awake:
+          {
+            desired_state: "off",
+            service: "input_boolean/turn_off",
+            parameters: {},
+          }
+      light.nursery_ceiling_fan_light:
+        nap: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        bed: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        awake:
+          {
+            desired_state: "on",
+            service: "light/turn_on",
+            parameters: { brightness_pct: 15 },
+          }
+      switch.twins_sound_machine:
+        nap: { desired_state: "on", service: "switch/turn_on", parameters: {} }
+        bed: { desired_state: "on", service: "switch/turn_on", parameters: {} }
+        awake:
+          { desired_state: "off", service: "switch/turn_off", parameters: {} }
+      fan.nursery_ceiling_fan:
+        nap:
+          {
+            desired_state: "on",
+            service: "fan/turn_on",
+            parameters: { percentage: 75 },
+          }
+        bed:
+          {
+            desired_state: "on",
+            service: "fan/turn_on",
+            parameters: { percentage: 75 },
+          }
+        awake: { desired_state: "off", service: "fan/turn_off", parameters: {} }
+    Hallway:
+      light.upstairs_hallway_lights:
+        nap: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        bed: { desired_state: "off", service: "light/turn_off", parameters: {} }
+      input_boolean.enable_motion_detection:
+        nap:
+          {
+            desired_state: "on",
+            service: "input_boolean/turn_on",
+            parameters: {},
+          }
+        bed:
+          {
+            desired_state: "off",
+            service: "input_boolean/turn_off",
+            parameters: {},
+          }
+    Loft:
+      light.loft_lights:
+        nap: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        bed: { desired_state: "off", service: "light/turn_off", parameters: {} }
+      light.loft_lamp:
+        nap: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        bed: { desired_state: "off", service: "light/turn_off", parameters: {} }
+    Stairs:
+      light.stairs_lights:
+        nap: { desired_state: "off", service: "light/turn_off", parameters: {} }
+        bed: { desired_state: "off", service: "light/turn_off", parameters: {} }
