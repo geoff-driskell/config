@@ -11,7 +11,7 @@ sonos_say:
     data_template:
       entity_id: '{{ sonos_entity }}'
       volume_level: '{{ volume }}'
-  - service: tts.amazon_polly_say
+  - service: tts.say
     data_template:
       entity_id: '{{ sonos_entity }}'
       message: <speak> <break time="1s"/> "{{ message }}"" </speak>
@@ -19,86 +19,18 @@ sonos_say:
   - service: sonos.restore
     data_template:
       entity_id: '{{ sonos_entity }}'
-turn_on_tv:
-  alias: Turn on TV
-  sequence:
-  - service: remote.send_command
-    data:
-      num_repeats: 1
-      delay_secs: 0.4
-      hold_secs: 0
-      command: wakeup
-    target:
-      entity_id: remote.living_room_apple_tv
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - service: media_player.turn_off
-    data: {}
-    target:
-      entity_id: media_player.living_room_apple_tv
-  mode: single
-new_script:
-  alias: Make the Apple TV sleep
-  sequence:
-  - service: remote.send_command
-    data:
-      delay_secs: 1
-      command:
-      - home_hold
-      - select
-    target:
-      entity_id: remote.living_room_apple_tv
-  - service: media_player.turn_off
-    data: {}
-    target:
-      entity_id: media_player.living_room_apple_tv
-  mode: single
-learn_tv_power:
-  sequence:
-  - service: remote.learn_command
-    target:
-      entity_id: remote.master_bedroom_remote
-    data:
-      device: master_bedroom_tv
-      command: power
-learn_tv_sleep:
-  sequence:
-  - service: remote.learn_command
-    target:
-      entity_id: remote.master_bedroom_remote
-    data:
-      device: master_bedroom_tv
-      command: sleep
-learn_tv_volume_up:
-  sequence:
-  - service: remote.learn_command
-    target:
-      entity_id: remote.master_bedroom_remote
-    data:
-      device: master_bedroom_tv
-      command: volume_up
-learn_tv_volume_down:
-  sequence:
-  - service: remote.learn_command
-    target:
-      entity_id: remote.master_bedroom_remote
-    data:
-      device: master_bedroom_tv
-      command: volume_down
-learn_tv_mute:
-  sequence:
-  - service: remote.learn_command
-    target:
-      entity_id: remote.master_bedroom_remote
-    data:
-      device: master_bedroom_tv
-      command: mute
 master_tv_bedtime:
   alias: Someone in Bed
   sequence:
+  - if:
+    - condition: state
+      entity_id: fan.master_bedroom_fan
+      state: 'off'
+    then:
+    - service: fan.turn_on
+      data: {}
+      target:
+        entity_id: fan.master_bedroom_fan
   - service: remote.send_command
     data:
       device: master_bedroom_tv
@@ -123,6 +55,17 @@ master_tv_bedtime:
       num_repeats: 7
     target:
       entity_id: remote.master_bedroom_remote
+  - if:
+    - condition: state
+      entity_id: media_player.master_bedroom
+      attribute: media_artist
+      state: The West Wing
+    then:
+    - service: remote.send_command
+      data:
+        command: play
+      target:
+        entity_id: remote.master_bedroom
   mode: single
 everyone_in_bed:
   alias: Everyone in Bed

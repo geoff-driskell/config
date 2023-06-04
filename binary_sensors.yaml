@@ -57,7 +57,25 @@
       unique_id: twins_napping
       value_template: >-
         {% if now().hour > 8 and now().hour < 17 %}
-          {% if is_state('input_boolean.avery_naptime', 'on') or is_state('input_boolean.benjamin_naptime', 'on') %}
+          {% if is_state('input_boolean.avery_bedtime', 'on') or is_state('input_boolean.benjamin_bedtime', 'on') %}
+            True
+          {% endif %}
+        {% endif %}
+    avery_napping:
+      friendly_name: "Avery Napping"
+      unique_id: avery_napping
+      value_template: >-
+        {% if now().hour > 8 and now().hour < 17 %}
+          {% if is_state('input_boolean.avery_bedtime', 'on') %}
+            True
+          {% endif %}
+        {% endif %}
+    benjamin_napping:
+      friendly_name: "Ben Napping"
+      unique_id: ben_napping
+      value_template: >-
+        {% if now().hour > 8 and now().hour < 17 %}
+          {% if is_state('input_boolean.benjamin_bedtime', 'on') %}
             True
           {% endif %}
         {% endif %}
@@ -72,23 +90,20 @@
       friendly_name: "Twins Sleeping"
       unique_id: twins_sleeping
       value_template: >-
-        {% if is_state('input_boolean.avery_naptime', 'on') or is_state('input_boolean.benjamin_naptime', 'on') %}
+        {% if is_state('input_boolean.avery_bedtime', 'on') or is_state('input_boolean.benjamin_bedtime', 'on') %}
           True
         {% endif %}
     master_bed_someone:
       friendly_name: "Master Bed Someone"
       unique_id: b666ecf2-7954-42df-b12b-7905344f14f5
       value_template: >-
-        {% if is_state('binary_sensor.master_bed_sensor_geoff_bed_occupancy', 'on') or is_state('sensor.master_bed_sensor_victoria_s_bed_sensor', 'on') %}
+        {% if is_state('binary_sensor.master_bed_sensor_geoff_bed_occupancy', 'on') or is_state('binary_sensor.master_bed_sensor_victoria_bed_occupancy', 'on') %}
           True
         {% endif %}
     master_bed_everyone:
       friendly_name: "Master Bed Everyone"
       unique_id: a7246465-3a97-4e63-b302-f8059c959c1d
       value_template: >-
-        {% if is_state('binary_sensor.master_bed_sensor_geoff_bed_occupancy', 'on') and is_state('sensor.master_bed_sensor_victoria_s_bed_sensor', 'on') %}
+        {% if is_state('binary_sensor.master_bed_sensor_geoff_bed_occupancy', 'on') and is_state('binary_sensor.master_bed_sensor_victoria_bed_occupancy', 'on') %}
           True
         {% endif %}
-
-- platform: workday
-  country: US

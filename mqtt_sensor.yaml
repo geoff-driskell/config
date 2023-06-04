@@ -14,39 +14,6 @@
   device_class: timestamp
   icon: mdi:clock-outline
 
-- name: tesla_version
-  unique_id: c056640b-f7ca-4aaa-8d56-93a67ce640f0
-  state_topic: "teslamate/cars/1/version"
-  icon: mdi:alphabetical
-
-- name: tesla_update_version
-  unique_id: 09bdbd65-77fa-4247-bd63-24471210b68b
-  state_topic: "teslamate/cars/1/update_version"
-  icon: mdi:alphabetical
-
-- name: tesla_model
-  unique_id: f3ed67db-c7cb-4994-99ac-138aba1c1666
-  state_topic: "teslamate/cars/1/model"
-
-- name: tesla_trim_badging
-  unique_id: 21f2df30-ca70-4601-ad45-414eb389da11
-  state_topic: "teslamate/cars/1/trim_badging"
-  icon: mdi:shield-star-outline
-
-- name: tesla_exterior_color
-  unique_id: 35db5de8-8abd-49dd-b566-ad9a8e320b5b
-  state_topic: "teslamate/cars/1/exterior_color"
-  icon: mdi:palette
-
-- name: tesla_wheel_type
-  unique_id: 21518e14-f519-48f9-8613-c1e44167647a
-  state_topic: "teslamate/cars/1/wheel_type"
-
-- name: tesla_spoiler_type
-  unique_id: dc6aff8f-60ac-4ed2-82ed-0125cf50fd0d
-  state_topic: "teslamate/cars/1/spoiler_type"
-  icon: mdi:car-sports
-
 - name: tesla_geofence
   unique_id: b994abdf-07e7-47d9-8f2f-8f8c20d8b423
   state_topic: "teslamate/cars/1/geofence"
@@ -64,49 +31,12 @@
   unit_of_measurement: °
   icon: mdi:crosshairs-gps
 
-- name: tesla_shift_state
-  unique_id: d0bd168a-8e6c-48ce-8871-9720b5fc358b
-  state_topic: "teslamate/cars/1/shift_state"
-  icon: mdi:car-shift-pattern
-
 - name: tesla_power
   unique_id: ccd10d4e-4408-473e-b9a9-75ed49b89aa5
   state_topic: "teslamate/cars/1/power"
   device_class: power
   unit_of_measurement: W
   icon: mdi:flash
-
-- name: tesla_speed
-  unique_id: 6caeb454-88e6-4a6a-9936-c3ab2100d68e
-  state_topic: "teslamate/cars/1/speed"
-  unit_of_measurement: "km/h"
-  icon: mdi:speedometer
-
-- name: tesla_heading
-  unique_id: ebc93ddc-ab86-4d6d-ad92-663d2d2384cc
-  state_topic: "teslamate/cars/1/heading"
-  unit_of_measurement: °
-  icon: mdi:compass
-
-- name: tesla_elevation
-  unique_id: ad3ee03e-6a55-4df4-9766-ab01326679ae
-  state_topic: "teslamate/cars/1/elevation"
-  unit_of_measurement: m
-  icon: mdi:image-filter-hdr
-
-- name: tesla_inside_temp
-  unique_id: 37ed0d45-3b6d-4dfa-afff-140bd962c9b6
-  state_topic: "teslamate/cars/1/inside_temp"
-  device_class: temperature
-  unit_of_measurement: °C
-  icon: mdi:thermometer-lines
-
-- name: tesla_outside_temp
-  unique_id: 07128895-5067-4c32-bf70-c155b612311f
-  state_topic: "teslamate/cars/1/outside_temp"
-  device_class: temperature
-  unit_of_measurement: °C
-  icon: mdi:thermometer-lines
 
 - name: tesla_odometer
   unique_id: 159442a8-f9bb-4b5e-ae17-bcaff2ed2776

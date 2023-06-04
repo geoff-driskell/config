@@ -32,22 +32,6 @@
       value_template: >
         {{ (states('sensor.tesla_odometer') | float / 1.609344) | round(2) }}
 
-    tesla_speed_mph:
-      unique_id: f2ad76c7-bbd9-46ee-af95-cb9fd90b791a
-      friendly_name: Speed (MPH)
-      unit_of_measurement: mph
-      icon_template: mdi:speedometer
-      value_template: >
-        {{ (states('sensor.tesla_speed') | float / 1.609344) | round(2) }}
-
-    tesla_elevation_ft:
-      unique_id: 6440c399-2bc7-4485-b507-5150cafec9b1
-      friendly_name: Elevation (ft)
-      unit_of_measurement: ft
-      icon_template: mdi:image-filter-hdr
-      value_template: >
-        {{ (states('sensor.tesla_elevation') | float * 3.2808 ) | round(2) }}
-
     lights_on_all:
       unique_id: 038e10f1-1990-4e0f-b9a1-082fa2fd76d9
       friendly_name: Lights on (All)
@@ -195,15 +179,29 @@
         {% endif %}
 
 - platform: history_stats
-  name: Avery Sleep
-  entity_id: input_boolean.avery_naptime
+  name: Avery Nap
+  entity_id: binary_sensor.avery_napping
   state: "on"
   type: time
   start: "{{ 0 }}"
   end: "{{ now() }}"
 - platform: history_stats
-  name: Benjamin Sleep
-  entity_id: input_boolean.benjamin_naptime
+  name: Benjamin Nap
+  entity_id: binary_sensor.benjamin_napping
+  state: "on"
+  type: time
+  start: "{{ 0 }}"
+  end: "{{ now() }}"
+- platform: history_stats
+  name: Avery Bed
+  entity_id: input_boolean.avery_bedtime
+  state: "on"
+  type: time
+  start: "{{ 0 }}"
+  end: "{{ now() }}"
+- platform: history_stats
+  name: Benjamin Bed
+  entity_id: input_boolean.benjamin_bedtime
   state: "on"
   type: time
   start: "{{ 0 }}"

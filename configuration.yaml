@@ -1,24 +1,11 @@
-homeassistant:
-  name: Driskell Home
-  latitude: 37.65525
-  longitude: -77.41344
-  elevation: 170
-  unit_system: imperial
-  currency: USD
-  country: US
-  time_zone: "America/New_York"
-  internal_url: "http://192.168.1.10:8123"
-  external_url: !secret external_url
-
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
-# Text to speech
+recorder:
+  db_url: !secret mariadb_url
+
+  # Text to speech
 tts:
-  - platform: google_translate
-    cache: true
-    cache_dir: /tmp/tts
-    time_memory: 300
   - platform: amazon_polly
     aws_access_key_id: !secret aws_key
     aws_secret_access_key: !secret aws_secret
@@ -36,49 +23,33 @@ proximity:
     tolerance: 15
     unit_of_measurement: mi
 
-circadian_lighting:
 mqtt:
   sensor: !include mqtt_sensor.yaml
   binary_sensor: !include mqtt_binary_sensor.yaml
 
 utility_meter:
-  avery_daily_sleep:
-    source: sensor.avery_sleep
-    name: Avery Daily Sleep
+  avery_daily_nap:
+    source: sensor.avery_nap
+    name: Avery Daily Nap
     cycle: daily
     offset:
       hours: 9
-    tariffs:
-      - nap
-      - bed
-  benjamin_daily_sleep:
-    source: sensor.benjamin_sleep
-    name: Benjamin Daily Sleep
+  benjamin_daily_nap:
+    source: sensor.benjamin_nap
+    name: Benjamin Daily Nap
     cycle: daily
     offset:
       hours: 9
-    tariffs:
-      - nap
-      - bed
 
 template:
   - sensor:
-    - name: Dishwasher
-      unique_id: c99fa587-cb66-49f6-8780-ded1ba13dc0d
-      state: >
-        {% if states("sensor.dishwasher")|float == 0 %}
-          Off
-        {% elif states("sensor.dishwasher")|float <= 1 %}
-          Idle
-        {% else %}
-          Running
-        {% endif %}
-      icon: >
-        {% if states("sensor.dishwasher")|float <= 1 %}
-          mdi:dishwasher-off
-        {% else %}
-          mdi:dishwasher
-        {% endif %}
+      - name: trash_days
+        unique_id: c16bb989-0f74-4fb0-b105-fe039b7fbfc3
+        state: >-
+          {{ min(((state_attr('calendar.garbage','start_time') | as_timestamp - today_at('00:00') | as_timestamp) / 86400) | int, 2) }}
+        attributes:
+          days: >-
+            {{ ((state_attr('calendar.garbage','start_time') | as_timestamp - today_at('00:00') | as_timestamp) / 86400) | int }}
 
 group: !include groups.yaml
 automation: !include automations.yaml

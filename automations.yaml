@@ -21,23 +21,23 @@
     - binary_sensor.mudroom_door
     from: 'off'
     to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.mudroom_door_contact
+    to: 'on'
   condition:
-  - alias: Workday
-    condition: time
-    before: 08:00:00
-    weekday:
-    - mon
-    - tue
-    - wed
-    - thu
-    - fri
-    after: 00:00:00
   - alias: Tesla Home
     condition: state
     entity_id: device_tracker.tesla_location
     state: home
   - condition: state
-    entity_id: input_boolean.on_leave_or_teleworking
+    entity_id: binary_sensor.workday_sensor
+    state: 'on'
+  - condition: time
+    after: 00:00:00
+    before: '10:00:00'
+  - condition: state
+    entity_id: calendar.geoff_leave_and_telework
     state: 'off'
   action:
   - service: script.sonos_say
@@ -73,30 +73,659 @@
       entity_id: sensor.tesla_est_battery_range_mi
       below: 198.6
   action:
-  - service: script.sonos_say
-    data_template:
-      sonos_entity: media_player.kitchen
-      volume: 0.6
-      message: "{{ [\n  'Pardon me, ',\n  'Excuse me, ',\n  'I do not mean to interrupt,
-        but,',\n  'I hate to interrupt, but,',\n  'I beg your pardon, ',\n  'I do
-        not mean to intrude, but, ',\n  'I am sorry to interrupt, but. ',\n  'Just
-        a quick heads up, '\n  ] | random }}\n{{ [\n  'the Tesla is not plugged in.',\n
-        \ 'your car needs to be plugged in for you to make it to work tomorrow.',\n
-        \ 'plugging in your car tonight will save you on supercharging.',\n  'the
-        Tesla is unplugged. I would plug it in for you. But I lack legs. And Arms.'\n
-        \   ] | random }}"
+  - repeat:
+      while:
+      - condition: state
+        entity_id: binary_sensor.tesla_plugged_in
+        state: 'off'
+      sequence:
+      - service: script.sonos_say
+        data_template:
+          sonos_entity: media_player.kitchen
+          volume: 0.6
+          message: "{{ [\n  'Pardon me, ',\n  'Excuse me, ',\n  'I do not mean to
+            interrupt, but,',\n  'I hate to interrupt, but,',\n  'I beg your pardon,
+            ',\n  'I do not mean to intrude, but, ',\n  'I am sorry to interrupt,
+            but. ',\n  'Just a quick heads up, '\n  ] | random }}\n{{ [\n  'the Tesla
+            is not plugged in.',\n  'your car needs to be plugged in for you to make
+            it to work tomorrow.',\n  'plugging in your car tonight will save you
+            on supercharging.',\n  'the Tesla is unplugged. I would plug it in for
+            you. But I lack legs. And Arms.'\n    ] | random }}"
+      - delay:
+          hours: 0
+          minutes: 15
+          seconds: 0
+          milliseconds: 0
   initial_state: true
-- id: '1670369323535'
-  alias: Buffet Christmas lights
+- id: '1682131889423'
+  alias: Master Bath Humidity
+  description: ''
+  use_blueprint:
+    path: Blackshome/bathroom-humidity-exhaust-fan.yaml
+    input:
+      fan_switch:
+        entity_id: fan.master_bathroom_shower_fan
+      trigger: sensor.master_bathroom_derivative
+- id: '1684177590327'
+  alias: Alarmo - Disarm using Front Door Lock
   description: ''
   trigger:
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 1
+    id: Victoria
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 2
+    id: Geoff
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 3
+    id: Tracy
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 4
+    id: Derek
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 5
+    id: Kimberly
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 6
+    id: Hagan
+    enabled: true
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 7
+    id: Katie
+    enabled: true
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 8
+    id: Terry
+    enabled: true
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 9
+    id: Jason
+    enabled: true
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 10
+    id: Cleaning Lady
+    enabled: true
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Keypad unlock operation
+      parameters:
+        userId: 11
+    id: Temporary Guest Code
+    enabled: true
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Manual unlock operation
+    id: Manual unlock
+  - platform: event
+    event_type: zwave_js_notification
+    event_data:
+      device_id: a20e1d5257e28130ce0d092757c67817
+      event_label: Manual lock operation
+    id: Manual lock
+  condition: []
+  action:
+  - service: notify.notify
+    data:
+      title: Front Door Unlocked
+      message: '{{ trigger.id }} unlocked the front door.'
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Victoria
+      sequence:
+      - service: alarmo.disarm
+        data:
+          entity_id: alarm_control_panel.alarmo
+          code: '0526'
+    - conditions:
+      - condition: trigger
+        id: Geoff
+      sequence:
+      - service: alarmo.disarm
+        data:
+          entity_id: alarm_control_panel.alarmo
+          code: '4295'
+    - conditions:
+      - condition: trigger
+        id: Cleaning Lady
+      sequence:
+      - service: alarmo.disarm
+        data:
+          entity_id: alarm_control_panel.alarmo
+          code: '5628'
+    - conditions:
+      - condition: trigger
+        id: Tracy
+      sequence:
+      - service: alarm_control_panel.alarm_disarm
+        data:
+          code: '6976'
+    - conditions:
+      - condition: trigger
+        id: Terry
+      sequence:
+      - service: alarmo.disarm
+        data:
+          entity_id: alarm_control_panel.alarmo
+          code: '6250'
+    - conditions:
+      - condition: trigger
+        id: Derek
+      sequence:
+      - service: alarmo.disarm
+        data:
+          entity_id: alarm_control_panel.alarmo
+          code: '0731'
+  mode: single
+- id: '1684262056935'
+  alias: Alarmo - Set Alarm on Leave
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - person.geoff
+    from: home
+  - platform: state
+    entity_id:
+    - person.victoria
+    from: home
+  - platform: state
+    entity_id:
+    - person.house_guests
+    from: home
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: person.geoff
+      state: home
+    - condition: state
+      entity_id: person.victoria
+      state: home
+    - condition: state
+      entity_id: person.house_guests
+      state: home
+  action:
+  - service: alarmo.arm
+    data:
+      mode: away
+      skip_delay: true
+      force: false
+      entity_id: alarm_control_panel.alarmo
+  mode: single
+- id: '1684266027701'
+  alias: Alarmo - Disarm when arriving
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - person.geoff
+    to: home
+    id: Geoff
+  - platform: state
+    entity_id:
+    - person.victoria
+    to: home
+    id: Victoria
+  - platform: state
+    entity_id:
+    - person.house_guests
+    to: home
+    id: House Guests
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: alarm_control_panel.alarmo
+      state: disarmed
+  action:
+  - service: notify.notify
+    data:
+      title: Someone Home
+      message: '{{ trigger.id }} arrived home, disarming alarm.'
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Victoria
+      sequence:
+      - service: alarmo.disarm
+        data:
+          code: '0526'
+          entity_id: alarm_control_panel.alarmo
+    - conditions:
+      - condition: trigger
+        id: Geoff
+      sequence:
+      - service: alarmo.disarm
+        data:
+          entity_id: alarm_control_panel.alarmo
+          code: '4295'
+    - conditions:
+      - condition: trigger
+        id: House Guests
+      sequence:
+      - service: alarmo.disarm
+        data:
+          entity_id: alarm_control_panel.alarmo
+          code: '8945'
+  mode: single
+- id: '1684274835102'
+  alias: Master Bedroom - Bed Automation
+  description: This automation turns on the tv and sets the sleep timer when someone
+    gets into bed. Once the second person is in bed it turns off the lights in the
+    room. If the second person fails to join the first person in a timely manner it
+    will turn off the lights prior to the second person getting into bed.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bed_someone
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_select.house_mode
+    state: Night
+  action:
+  - service: script.master_tv_bedtime
+    data: {}
+  - wait_for_trigger:
+    - platform: state
+      entity_id:
+      - binary_sensor.master_bed_everyone
+      to: 'on'
+    timeout:
+      hours: 0
+      minutes: 10
+      seconds: 0
+      milliseconds: 0
+  - service: script.everyone_in_bed
+    data: {}
+  - service: input_select.select_option
+    data:
+      option: Night Quiet
+    target:
+      entity_id: input_select.house_mode
+  - service: alarmo.arm
+    data:
+      mode: night
+      entity_id: alarm_control_panel.alarmo
+  mode: single
+- id: '1684286473394'
+  alias: Alarmo - Disarm when awake
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.geoff_sleeping
+    to: 'off'
+  - platform: state
+    entity_id:
+    - input_boolean.victoria_sleeping
+    to: 'off'
+  - platform: state
+    entity_id:
+    - binary_sensor.geoffs_iphone_13_2_focus
+    to: 'off'
+  - platform: state
+    entity_id:
+    - binary_sensor.vickis_iphone_11_pro_focus
+    to: 'off'
+  condition: []
+  action:
+  - service: alarmo.disarm
+    data:
+      entity_id: alarm_control_panel.alarmo
+      code: '4295'
+  mode: single
+- id: '1684518109000'
+  alias: Master Bathroom - Shower Lights
+  description: This automation turns on the shower light when the shower door is opened
+    and turns them off when motion stops being detected in the bathroom.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_shower_door_contact
+    to: 'on'
+    id: Door Opened
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_occupancy
+    to: 'off'
+    id: No Motion
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Door Opened
+      sequence:
+      - service: light.turn_on
+        data: {}
+        target:
+          entity_id: light.master_bathroom_shower_light
+    - conditions:
+      - condition: trigger
+        id: No Motion
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.master_bathroom_shower_light
+  mode: single
+- id: '1684520112579'
+  alias: House Modes
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bed_sensor_geoff_bed_occupancy
+    - binary_sensor.master_bed_sensor_victoria_bed_occupancy
+    to: 'off'
+    id: Someone Left Bed
+  - platform: state
+    entity_id:
+    - binary_sensor.twins_bed
+    to: 'off'
+    id: Twins Awake
+  - platform: state
+    entity_id:
+    - binary_sensor.kids_bathroom_motion_occupancy
+    to: 'on'
+    id: Kids Bathroom Occupied
+  - platform: state
+    entity_id:
+    - input_boolean.twins_down_for_the_night
+    to: 'on'
+    id: Twins Asleep
+  - platform: time
+    at: 06:00:00
+    id: 6am
+  - platform: time
+    at: '23:00:00'
+    id: 11 pm
+  - platform: state
+    entity_id:
+    - binary_sensor.twins_bed
+    to: 'on'
+    id: Twins Bedtime
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Someone Left Bed
+      - condition: state
+        entity_id: input_select.house_mode
+        state: Night Quiet
+      - condition: time
+        after: 04:00:00
+        before: '10:00:00'
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Morning Quiet
+        target:
+          entity_id: input_select.house_mode
+        alias: Change house mode to Morning Quiet
+      - service: notify.notify
+        data:
+          title: House Mode Change
+          message: House mode changed to Morning Quiet.
+        alias: Notify everyone of the change
+    - conditions:
+      - condition: trigger
+        id: Someone Left Bed
+      - condition: state
+        entity_id: input_select.house_mode
+        state: Morning Quiet
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Morning
+        target:
+          entity_id: input_select.house_mode
+        alias: Change house mode to Morning
+      - service: notify.notify
+        data:
+          message: House mode changed to Morning.
+          title: House Mode Change
+        alias: Notify everyone of the change
+    - conditions:
+      - condition: trigger
+        id: Twins Awake
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Day
+        target:
+          entity_id: input_select.house_mode
+        alias: Change house mode to Day
+      - service: notify.notify
+        data:
+          message: House mode changed to Day.
+          title: House Mode Change
+    - conditions:
+      - condition: trigger
+        id: Kids Bathroom Occupied
+      - condition: state
+        entity_id: input_select.house_mode
+        state: Day
+      - condition: time
+        after: '17:00:00'
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Evening
+        target:
+          entity_id: input_select.house_mode
+        alias: Change house mode to Evening
+      - service: notify.notify
+        data:
+          message: House mode changed to Evening.
+          title: House Mode Change
+    - conditions:
+      - condition: trigger
+        id: Twins Bedtime
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Night
+        target:
+          entity_id: input_select.house_mode
+        alias: Change house mode to Night
+      - service: notify.notify
+        data:
+          title: House Mode Change
+          message: House mode changed to Night.
+    - conditions:
+      - condition: trigger
+        id: 6am
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: person.geoff
+          state: home
+        - condition: state
+          entity_id: person.victoria
+          state: home
+        - condition: state
+          entity_id: input_select.house_mode
+          state: Morning
+      - condition: state
+        entity_id: person.house_guests
+        state: home
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Morning
+        target:
+          entity_id: input_select.house_mode
+        alias: Change house mode to Morning
+      - service: notify.notify
+        data:
+          title: House Mode Change
+          message: House mode changed to Morning.
+    - conditions:
+      - condition: trigger
+        id: 11 pm
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: person.geoff
+          state: home
+        - condition: state
+          entity_id: person.victoria
+          state: home
+        - condition: state
+          entity_id: input_select.house_mode
+          state: Night Quiet
+      - condition: state
+        entity_id: person.house_guests
+        state: home
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Night Quiet
+        target:
+          entity_id: input_select.house_mode
+        alias: Change house to Night Quiet
+      - service: notify.notify
+        data:
+          title: House Mode Change
+          message: House mode changed to Night Quiet.
+  mode: single
+- id: '1684955107291'
+  alias: Bathroom Light
+  description: ''
+  use_blueprint:
+    path: gdriskell/bathroom_light.yaml
+    input:
+      motion_sensor: binary_sensor.geoffs_iphone_13_2_focus
+      lights:
+      - light.office_lamp
+      - light.office_light
+- id: '1685110770571'
+  alias: Master Bedroom - Fan Auto Speed
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - fan.master_bedroom_fan
+    to: 'on'
+    id: Fan On
+  - platform: state
+    entity_id:
+    - sensor.master_bedroom_temperature
+    id: Temp Changes
+  condition:
+  - condition: state
+    entity_id: fan.master_bedroom_fan
+    state: 'on'
+  action:
+  - variables:
+      fan_percentage: '{% if is_state(''climate.master_bedroom'', ''heat_cool'') %}
+        {% set min_temp = state_attr(''climate.master_bedroom'', ''target_temp_low'')
+        | float(0.0) %} {% set max_temp = state_attr(''climate.master_bedroom'', ''target_temp_high'')
+        | float(0.0) %} {% elif is_state(''climate.master_bedroom'', ''heat'') %}
+        {% set min_temp = state_attr(''climate.master_bedroom'', ''temperature'')
+        | float(0.0) - 4.0 %} {% set max_temp = state_attr(''climate.master_bedroom'',
+        ''temperature'') | float(0.0) %} {% elif is_state(''climate.master_bedroom'',
+        ''cool'') %} {% set min_temp = state_attr(''climate.master_bedroom'', ''temperature'')
+        | float(0.0) %} {% set max_temp = state_attr(''climate.master_bedroom'', ''temperature'')
+        | float(0.0) + 4.0 %} {% endif %} {% if states(''sensor.master_bedroom_temperature'')
+        | float(0.0) < min_temp %} {% set room_temperature = min_temp -%} {% elif
+        states(''sensor.master_bedroom_temperature'') | float(0.0) > max_temp %} {%
+        set room_temperature = max_temp -%} {% else %} {% set room_temperature = states(''sensor.master_bedroom_temperature'')
+        | float(0.0) %} {% endif %} {% set fan_percentage = (100.0 * ((room_temperature
+        - min_temp) / (max_temp - min_temp))) | int %} {{ max(50, fan_percentage)
+        | int }}'
+  - service: fan.set_percentage
+    data:
+      percentage: '{{ fan_percentage }}'
+    target:
+      entity_id: fan.master_bedroom_fan
+  mode: single
+- id: '1685119619024'
+  alias: Pantry - Door Lights
+  description: ''
+  use_blueprint:
+    path: gdriskell/door-lights.yaml
+    input:
+      contact_sensor: binary_sensor.pantry_door_contact
+      light: light.pantry_light
+- id: '1685119705161'
+  alias: Server Room - Door Lights
+  description: ''
+  use_blueprint:
+    path: gdriskell/door-lights.yaml
+    input:
+      contact_sensor: binary_sensor.server_room_door_contact
+      light: light.server_room_light
+- id: '1685120992628'
+  alias: Exterior - Night Time Lights
+  description: This automation turns on the front exterior lights at sunset and turns
+    them off at sunrise.
+  trigger:
+  - platform: sun
+    event: sunrise
+    id: Sunrise
   - platform: sun
     event: sunset
     offset: 0
     id: Sunset
-  - platform: time
-    at: '23:00:00'
-    id: Midnight
   condition: []
   action:
   - choose:
@@ -104,131 +733,666 @@
       - condition: trigger
         id: Sunset
       sequence:
-      - type: turn_on
-        device_id: 3fbd83da1a9d47c93117aaf4f18770bf
-        entity_id: switch.lumi_lumi_plug_maus01_switch_2
-        domain: switch
+      - service: light.turn_on
+        data: {}
+        target:
+          entity_id:
+          - light.front_lamp_post_light
+          - light.garage_outside_lights
     - conditions:
       - condition: trigger
-        id: Midnight
+        id: Sunrise
       sequence:
-      - type: turn_off
-        device_id: 3fbd83da1a9d47c93117aaf4f18770bf
-        entity_id: switch.lumi_lumi_plug_maus01_switch_2
-        domain: switch
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+          - light.front_lamp_post_light
+          - light.garage_outside_lights
   mode: single
-- id: '1680543685838'
-  alias: Leave/Telework Switch On
-  description: This automation triggers if Geoff is on leave or teleworking to alter
-    other automations.
-  trigger:
-  - platform: time
-    at: 03:00:00
-  condition:
-  - condition: state
-    entity_id: calendar.geoff_leave_and_telework
-    state: 'on'
-  action:
-  - service: input_boolean.turn_on
-    data: {}
-    target:
-      entity_id: input_boolean.on_leave_or_teleworking
-  mode: single
-- id: '1681312852471'
-  alias: Sleep Type Selector
+- id: '1685123402374'
+  alias: Master Bathroom - Toilet Fan Allowance
   description: ''
-  trigger:
-  - platform: time
-    at: 09:00:00
-    variables:
-      tariff: nap
-  - platform: time
-    at: '17:00:00'
-    variables:
-      tariff: bed
-  condition: []
-  action:
-  - service: select.select_option
-    data:
-      option: '{{ tariff }}'
-    target:
-      entity_id: select.avery_daily_sleep
-  - service: select.select_option
-    data:
-      option: '{{ tariff }}'
-    target:
-      entity_id: select.benjamin_daily_sleep
-  mode: single
-- id: '1681324323411'
-  alias: Leave/Teleworking Reset
+  use_blueprint:
+    path: gdriskell/entity-allowance.yaml
+    input:
+      timed_entity: fan.master_bathroom_toilet_fan
+      timer_entity: timer.master_bathroom_toilet_fan_timer
+- id: '1685123521260'
+  alias: Downstairs Bathroom - Fan Allowance
   description: ''
-  trigger:
-  - platform: time
-    at: '23:30:00'
-  condition: []
-  action:
-  - service: input_boolean.turn_off
-    data: {}
-    target:
-      entity_id: input_boolean.on_leave_or_teleworking
-  mode: single
-- id: '1681501102093'
-  alias: New Automation
+  use_blueprint:
+    path: gdriskell/entity-allowance.yaml
+    input:
+      timed_entity: fan.downstairs_bathroom_fan
+      timer_entity: timer.downstairs_bathroom_fan_timer
+- id: '1685128667750'
+  alias: Mudroom - Auto Motion Lights
   description: ''
-  trigger:
-  - platform: time
-    at: 00:00:00
-  condition: []
-  action:
-  - service: media_player.play_media
-    target:
-      entity_id: media_player.kitchen_2
-    data:
-      media_content_id: media-source://media_source/local/09 - Against The Wind.mp3
-      media_content_type: audio/mpeg
-    metadata:
-      title: 09 - Against The Wind.mp3
-      thumbnail:
-      media_class: music
-      children_media_class:
-      navigateIds:
-      - {}
-      - media_content_type: app
-        media_content_id: media-source://media_source
-  - service: media_player.repeat_set
-    data:
-      repeat: one
-    target:
-      entity_id: media_player.kitchen_2
-  mode: single
-- id: '1682098701688'
-  alias: Reset Nap Switches
+  use_blueprint:
+    path: gdriskell/automoli.yaml
+    input:
+      brightness_morning_quiet: 59
+      brightness_morning: 57
+      brightness_day: 42
+      brightness_evening: 68
+      brightness_night: 83
+      brightness_night_quiet: 74
+      motion_entity: binary_sensor.mudroom_motion_occupancy
+      light_target:
+        entity_id: light.mudroom_lights
+      automation_blocker: input_boolean.enable_motion_detection
+- id: '1685145078205'
+  alias: Laundry Room - Auto Motion Lights
+  description: This automation turns on the laundry room lights when motion is detected.
+    The lights are set to various brightness levels depending on the state of the
+    house.
+  use_blueprint:
+    path: gdriskell/automoli.yaml
+    input:
+      motion_entity: binary_sensor.laundry_room_motion_occupancy
+      light_target:
+        entity_id: light.laundry_room_main_lights
+      automation_blocker: input_boolean.enable_motion_detection
+      brightness_morning_quiet: 15
+      brightness_morning: 20
+      brightness_day: 100
+      brightness_evening: 50
+      brightness_night: 15
+      brightness_night_quiet: 8
+- id: '1685145254908'
+  alias: Upstairs Hallway - Auto Motion Lights
+  description: ''
+  use_blueprint:
+    path: gdriskell/automoli.yaml
+    input:
+      motion_entity: binary_sensor.upstairs_hallway_occupancy
+      light_target:
+        entity_id: light.upstairs_hallway_lights
+      automation_blocker: input_boolean.enable_motion_detection
+      brightness_morning_quiet: 15
+      brightness_morning: 20
+      brightness_day: 100
+      brightness_evening: 50
+      brightness_night: 15
+      brightness_night_quiet: 8
+- id: '1685145467144'
+  alias: Victoria's Closet - Auto Motion Lights
+  description: ''
+  use_blueprint:
+    path: gdriskell/automoli.yaml
+    input:
+      motion_entity: binary_sensor.victorias_closet_motion_occupancy
+      light_target:
+        entity_id: light.victoria_s_closet_lights
+      automation_blocker: input_boolean.enable_motion_detection
+- id: '1685146189210'
+  alias: Kitchen - Light Automation
   description: ''
   trigger:
   - platform: state
     entity_id:
-    - input_boolean.start_twins_sleeping
-    - input_boolean.wake_up_avery
-    - input_boolean.wake_up_benjamin
-    - input_boolean.wake_up_both_kids
+    - binary_sensor.kitchen_occupancy
     to: 'on'
-  condition: []
+    id: Motion Detected
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_occupancy
+    to: 'off'
+    id: Motion Cleared
+  condition:
+  - condition: state
+    entity_id: input_boolean.enable_motion_detection
+    state: 'off'
   action:
-  - service: input_boolean.turn_off
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.wake_up_avery
-      - input_boolean.wake_up_benjamin
-      - input_boolean.wake_up_both_kids
-      - input_boolean.start_twins_sleeping
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Motion Detected
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.house_mode
+            state: Day
+          sequence:
+          - service: light.turn_on
+            data: {}
+            target:
+              entity_id:
+              - light.kitchen_island_lights
+              - light.kitchen_lights
+        - conditions:
+          - condition: state
+            entity_id: input_select.house_mode
+            state: Evening
+          sequence:
+          - service: light.turn_on
+            data: {}
+            target:
+              entity_id: light.kitchen_lights
+        default:
+        - service: light.turn_on
+          data: {}
+          target:
+            entity_id:
+            - light.kitchen_island_lights
+    - conditions:
+      - condition: trigger
+        id: Motion Cleared
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+          - light.kitchen_island_lights
+          - light.kitchen_lights
   mode: single
-- id: '1682131889423'
-  alias: Master Bath Humidity
+- id: '1685146316825'
+  alias: Master Bathroom Toilet - Auto Motion Lights
   description: ''
   use_blueprint:
-    path: Blackshome/bathroom-humidity-exhaust-fan.yaml
+    path: gdriskell/automoli.yaml
     input:
-      trigger: sensor.master_bath_humidity_derivative
-      fan_switch:
-        entity_id: fan.master_bathroom_shower_fan
+      motion_entity: binary_sensor.master_bathroom_toilet_motion_occupancy
+      light_target:
+        entity_id: light.master_bathroom_toilet_light
+      automation_blocker: input_boolean.enable_motion_detection
+      brightness_morning_quiet: 20
+      brightness_morning: 35
+      brightness_day: 100
+      brightness_evening: 50
+      brightness_night: 25
+      brightness_night_quiet: 11
+- id: '1685146386403'
+  alias: Downstairs Bathroom - Auto Motion Lights
+  description: ''
+  use_blueprint:
+    path: gdriskell/automoli.yaml
+    input:
+      motion_entity: binary_sensor.downstairs_bathroom_motion_occupancy
+      light_target:
+        entity_id: light.downstairs_bathroom_light
+      automation_blocker: input_boolean.enable_motion_detection
+      brightness_morning_quiet: 29
+      brightness_morning: 35
+      brightness_day: 20
+      brightness_evening: 41
+      brightness_night: 41
+      brightness_night_quiet: 35
+- id: '1685146661560'
+  alias: Master Bathroom - Auto Motion Lights
+  description: ''
+  use_blueprint:
+    path: gdriskell/automoli.yaml
+    input:
+      motion_entity: group.master_bath_occupancy
+      light_target:
+        entity_id: light.master_bathroom_vanity_lights
+      automation_blocker: input_boolean.enable_motion_detection
+      brightness_morning_quiet: 20
+      brightness_morning: 20
+      brightness_day: 100
+      brightness_evening: 50
+      brightness_night: 25
+      brightness_night_quiet: 8
+- id: '1685146801944'
+  alias: Kids Bathroom - Auto Motion Lights (w/ Humidity)
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kids_bathroom_motion_occupancy
+    to: 'on'
+    id: Motion Detected
+  - platform: state
+    entity_id:
+    - binary_sensor.kids_bathroom_motion_occupancy
+    to: 'off'
+    id: Motion Cleared
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.kids_bathroom_lights_timer
+    id: Time's Up
+  - platform: state
+    entity_id:
+    - light.kids_bathroom_vanity_lights
+    to: 'off'
+    id: Light Off
+  condition:
+  - condition: state
+    entity_id: input_boolean.enable_motion_detection
+    state: 'off'
+  action:
+  - variables:
+      light_brightness: '{% if is_state(''input_select.house_mode'', ''Morning Quiet'')%}
+        {% set brightness = 20 %} {% elif is_state(''input_select.house_mode'', ''Morning'')
+        %} {% set brightness = 35 %} {% elif is_state(''input_select.house_mode'',
+        ''Day'') %} {% set brightness = 100 %} {% elif is_state(''input_select.house_mode'',
+        ''Evening'') %} {% set brightness = 50 %} {% elif is_state(''input_select.house_mode'',
+        ''Night'') %} {% set brightness = 15 %} {% elif is_state(''input_select.house_mode'',
+        ''Night Quiet'') %} {% set brightness = 8 %} {% endif %} {{ brightness }}'
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Motion Detected
+      sequence:
+      - if:
+        - condition: state
+          entity_id: light.kids_bathroom_vanity_lights
+          state: 'off'
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ light_brightness }}'
+          target:
+            entity_id: light.kids_bathroom_vanity_lights
+        else:
+        - service: timer.cancel
+          data: {}
+          target:
+            entity_id: timer.kids_bathroom_lights_timer
+    - conditions:
+      - condition: trigger
+        id: Motion Cleared
+      sequence:
+      - service: timer.start
+        data: {}
+        target:
+          entity_id: timer.kids_bathroom_lights_timer
+    - conditions:
+      - condition: trigger
+        id: Time's Up
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: sensor.kids_bathroom_climate_humidity
+          below: 60
+        then:
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.kids_bathroom_vanity_lights
+        else:
+        - service: timer.start
+          data: {}
+          target:
+            entity_id: timer.kids_bathroom_lights_timer
+    - conditions:
+      - condition: trigger
+        id: Light Off
+      - condition: state
+        entity_id: timer.kids_bathroom_lights_timer
+        state: active
+      sequence:
+      - service: timer.cancel
+        data: {}
+        target:
+          entity_id: timer.kids_bathroom_lights_timer
+  mode: single
+- id: '1685147981929'
+  alias: HomeKit Tracker - Guest
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.guest_mode
+    to: 'on'
+    id: Turned On
+  - platform: state
+    entity_id:
+    - input_boolean.guest_mode
+    to: 'off'
+    id: Turned Off
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Turned On
+      sequence:
+      - service: device_tracker.see
+        data:
+          dev_id: homekit_guest
+          location_name: home
+    - conditions:
+      - condition: trigger
+        id: Turned Off
+      sequence:
+      - service: device_tracker.see
+        data:
+          dev_id: homekit_guest
+          location_name: not_home
+  mode: single
+- id: '1685281767237'
+  alias: Twins Sleeping Automation
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.homepod_twins_asleep
+    to: 'on'
+    id: Both Twins Asleep
+  - platform: state
+    entity_id:
+    - input_boolean.homepod_twins_asleep
+    to: 'off'
+    id: Both Twins Awake
+  - platform: state
+    entity_id:
+    - input_boolean.avery_bedtime
+    to: 'off'
+    id: Wake Just Avery
+  - platform: state
+    entity_id:
+    - input_boolean.benjamin_bedtime
+    to: 'off'
+    id: Wake up Just Benjamin
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Both Twins Asleep
+      sequence:
+      - service: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.play_sleep_song
+          - input_boolean.avery_bedtime
+          - input_boolean.benjamin_bedtime
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+          - light.attic_main_lights
+          - light.averys_bedroom_ceiling_fan_light
+          - light.averys_room_lamp
+          - light.nursery_ceiling_fan_light
+          - light.upstairs_hallway_lights
+          - light.stairs_lights
+          - light.loft_lamp
+          - light.loft_lights
+      - service: fan.turn_on
+        data:
+          percentage: 75
+        target:
+          entity_id:
+          - fan.averys_bedroom_ceiling_fan
+          - fan.nursery_ceiling_fan
+      - service: switch.turn_on
+        data: {}
+        target:
+          entity_id: switch.twins_sound_machine
+    - conditions:
+      - condition: trigger
+        id: Both Twins Awake
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: input_boolean.avery_bedtime
+          state: 'on'
+        - condition: state
+          entity_id: input_boolean.benjamin_bedtime
+          state: 'on'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: and
+            conditions:
+            - condition: state
+              entity_id: input_boolean.avery_bedtime
+              state: 'on'
+            - condition: state
+              entity_id: input_boolean.benjamin_bedtime
+              state: 'on'
+            alias: If Both Kids Are Asleep
+          sequence:
+          - service: input_boolean.turn_off
+            data: {}
+            target:
+              entity_id:
+              - input_boolean.avery_bedtime
+              - input_boolean.benjamin_bedtime
+          - service: light.turn_on
+            data:
+              brightness_pct: 15
+            target:
+              entity_id:
+              - light.averys_bedroom_ceiling_fan_light
+              - light.nursery_ceiling_fan_light
+          - service: homeassistant.turn_off
+            data: {}
+            target:
+              entity_id:
+              - switch.twins_sound_machine
+              - input_boolean.play_sleep_song
+              - fan.averys_bedroom_ceiling_fan
+              - light.nursery_ceiling_fan_light
+        - conditions:
+          - condition: and
+            conditions:
+            - condition: state
+              entity_id: input_boolean.avery_bedtime
+              state: 'off'
+            - condition: state
+              entity_id: input_boolean.benjamin_bedtime
+              state: 'on'
+            alias: If Avery is Awake and Benjamin is Asleep
+          sequence:
+          - service: input_boolean.turn_off
+            data: {}
+            target:
+              entity_id: input_boolean.benjamin_bedtime
+          - service: light.turn_on
+            data:
+              brightness_pct: 15
+            target:
+              entity_id: light.nursery_ceiling_fan_light
+          - service: homeassistant.turn_off
+            data: {}
+            target:
+              entity_id:
+              - input_boolean.play_sleep_song
+              - switch.twins_sound_machine
+              - fan.nursery_ceiling_fan
+        - conditions:
+          - condition: and
+            conditions:
+            - condition: state
+              entity_id: input_boolean.avery_bedtime
+              state: 'on'
+            - condition: state
+              entity_id: input_boolean.benjamin_bedtime
+              state: 'off'
+            alias: If Avery is Asleep and Benjamin is Awake
+          sequence:
+          - service: input_boolean.turn_off
+            data: {}
+            target:
+              entity_id: input_boolean.avery_bedtime
+          - service: light.turn_on
+            data:
+              brightness_pct: 15
+            target:
+              entity_id: light.averys_bedroom_ceiling_fan_light
+          - service: input_boolean.turn_off
+            data: {}
+            target:
+              entity_id: input_boolean.play_sleep_song
+          - service: fan.turn_off
+            data: {}
+            target:
+              entity_id: fan.averys_bedroom_ceiling_fan
+    - conditions:
+      - condition: trigger
+        id: Wake Just Avery
+      - condition: state
+        entity_id: input_boolean.homepod_twins_asleep
+        state: 'on'
+      sequence:
+      - if:
+        - condition: state
+          entity_id: light.averys_bedroom_ceiling_fan_light
+          state: 'off'
+        then:
+        - service: light.turn_on
+          data: {}
+          target:
+            entity_id: light.averys_bedroom_ceiling_fan_light
+      - service: fan.turn_off
+        data: {}
+        target:
+          entity_id: fan.averys_bedroom_ceiling_fan
+      - if:
+        - condition: state
+          entity_id: input_boolean.benjamin_bedtime
+          state: 'off'
+        then:
+        - service: input_boolean.turn_off
+          data: {}
+          target:
+            entity_id:
+            - input_boolean.homepod_twins_asleep
+            - input_boolean.play_sleep_song
+    - conditions:
+      - condition: trigger
+        id: Wake up Just Benjamin
+      - condition: state
+        entity_id: input_boolean.homepod_twins_asleep
+        state: 'on'
+      sequence:
+      - if:
+        - condition: state
+          entity_id: light.nursery_ceiling_fan_light
+          state: 'off'
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: 15
+          target:
+            entity_id: light.nursery_ceiling_fan_light
+      - service: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.twins_sound_machine
+      - service: fan.turn_off
+        data: {}
+        target:
+          entity_id: fan.nursery_ceiling_fan
+      - if:
+        - condition: state
+          entity_id: input_boolean.avery_bedtime
+          state: 'off'
+        then:
+        - service: input_boolean.turn_off
+          data: {}
+          target:
+            entity_id:
+            - input_boolean.homepod_twins_asleep
+            - input_boolean.play_sleep_song
+  mode: single
+- id: '1685332305963'
+  alias: HomeKit Tracker - Geoff
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.geoff_home
+    id: Home
+    to: 'on'
+  - platform: state
+    entity_id:
+    - input_boolean.geoff_home
+    to: 'off'
+    id: Away
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Home
+      sequence:
+      - service: device_tracker.see
+        data:
+          dev_id: homekit_geoff
+          location_name: home
+    - conditions:
+      - condition: trigger
+        id: Away
+      sequence:
+      - service: device_tracker.see
+        data:
+          dev_id: homekit_geoff
+          location_name: not_home
+  mode: single
+- id: '1685332653441'
+  alias: HomeKit Tracker - Victoria
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.victoria_home
+    to: 'on'
+    id: Home
+  - platform: state
+    entity_id:
+    - input_boolean.victoria_home
+    to: 'off'
+    id: Away
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Home
+      sequence:
+      - service: device_tracker.see
+        data:
+          dev_id: homekit_victoria
+          location_name: home
+    - conditions:
+      - condition: trigger
+        id: Away
+      sequence:
+      - service: device_tracker.see
+        data:
+          dev_id: homekit_victoria
+          location_name: not_home
+  mode: single
+- id: '1685580322849'
+  alias: Garage Door Notifications
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - cover.main_garage_door_2
+    id: Opened
+    to: open
+  - platform: state
+    entity_id:
+    - cover.main_garage_door_2
+    to: closed
+    id: Closed
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: Opened
+      sequence:
+      - service: notify.notify
+        data:
+          message: The garage door was opened.
+          title: Main Garage Door
+    - conditions:
+      - condition: trigger
+        id: Closed
+      sequence:
+      - service: notify.notify
+        data:
+          title: Main Garage Door
+          message: The garage door was closed.
+  mode: single
